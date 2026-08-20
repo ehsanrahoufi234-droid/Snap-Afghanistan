@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,8 +11,13 @@ namespace SnapAfghanistan.Native.Dialogs
     public partial class SectorsDialog : Window
     {
         private readonly SnapRepository _repository;
+        private readonly OperationsService _operations = new OperationsService();
         public SectorsDialog(SnapRepository repository) { InitializeComponent(); _repository = repository; Loaded += (s, e) => Refresh(); }
-        private void Refresh() => Grid.ItemsSource = _repository.GetSectors();
+        private void Refresh()
+        {
+            Grid.ItemsSource = _repository.GetSectors().Where(x => x.Status != "بایگانی").ToList();
+            ArchivedButton.Content = "بایگانی‌شده‌ها  " + _operations.CountArchived("سکتور").ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+        }
         private SectorItem? Selected() => Grid.SelectedItem as SectorItem;
         private void Add_Click(object sender, RoutedEventArgs e) => EditSector(new SectorItem());
         private void Edit_Click(object sender, RoutedEventArgs e) { var item = Selected(); if (item != null) EditSector(item); }
@@ -22,6 +28,19 @@ namespace SnapAfghanistan.Native.Dialogs
             if (editor.ShowDialog() != true) return;
             try { _repository.SaveSector(editor.Result); Refresh(); }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "ذخیره نشد", MessageBoxButton.OK, MessageBoxImage.Warning); }
+        }
+        private void Archive_Click(object sender, RoutedEventArgs e)
+        {
+            var item = Selected(); if (item == null) { MessageBox.Show("ابتدا یک سکتور را انتخاب کنید."); return; }
+            if (MessageBox.Show("سکتور «" + item.Name + "» بایگانی شود؟", "تأیید بایگانی", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+            try { _operations.ArchiveSector(item.Id); Refresh(); }
+            catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "بایگانی نشد", MessageBoxButton.OK, MessageBoxImage.Warning); }
+        }
+        private void Archived_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ArchiveDialog("سکتور") { Owner = this };
+            dialog.ShowDialog();
+            if (dialog.Changed) Refresh();
         }
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
@@ -34,7 +53,8 @@ namespace SnapAfghanistan.Native.Dialogs
 
     internal sealed class SectorEditorDialog : Window
     {
-        private readonly TextBox _name = new TextBox(); private readonly TextBox _description = new TextBox { Height = 80, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap };
+        private readonly TextBox _name = new TextBox();
+        private readonly TextBox _description = new TextBox { Height = 80, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap };
         private readonly ComboBox _status = new ComboBox { ItemsSource = new[] { "فعال", "غیرفعال" } };
         public SectorItem Result { get; }
         public SectorEditorDialog(SectorItem source)
@@ -46,7 +66,8 @@ namespace SnapAfghanistan.Native.Dialogs
             panel.Children.Add(new TextBlock { Text = "توضیحات", Style = (Style)Application.Current.Resources["FieldLabelStyle"], Margin = new Thickness(0, 15, 0, 7) }); _description.Text = source.Description; panel.Children.Add(_description);
             panel.Children.Add(new TextBlock { Text = "وضعیت", Style = (Style)Application.Current.Resources["FieldLabelStyle"], Margin = new Thickness(0, 15, 0, 7) }); _status.SelectedItem = string.IsNullOrWhiteSpace(source.Status) ? "فعال" : source.Status; panel.Children.Add(_status);
             var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 20, 0, 0) };
-            var cancel = new Button { Content = "انصراف", Width = 100, IsCancel = true, Style = (Style)Application.Current.Resources["GhostButton"] }; var save = new Button { Content = "ذخیره", Width = 110, Margin = new Thickness(8, 0, 0, 0), Style = (Style)Application.Current.Resources["PrimaryButton"] };
+            var cancel = new Button { Content = "انصراف", Width = 100, IsCancel = true, Style = (Style)Application.Current.Resources["GhostButton"] };
+            var save = new Button { Content = "ذخیره", Width = 110, Margin = new Thickness(8, 0, 0, 0), Style = (Style)Application.Current.Resources["PrimaryButton"] };
             save.Click += (s, e) => { if (string.IsNullOrWhiteSpace(_name.Text)) { MessageBox.Show("نام سکتور ضروری است."); return; } Result.Name = _name.Text.Trim(); Result.Description = _description.Text.Trim(); Result.Status = Convert.ToString(_status.SelectedItem) ?? "فعال"; DialogResult = true; };
             buttons.Children.Add(cancel); buttons.Children.Add(save); panel.Children.Add(buttons); Content = panel;
         }

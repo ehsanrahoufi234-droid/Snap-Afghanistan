@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Globalization;
 using SnapAfghanistan.Native.Data;
 using SnapAfghanistan.Native.Models;
@@ -12,28 +11,34 @@ namespace SnapAfghanistan.Native.Services
         public IReadOnlyList<RevenueTrendPoint> GetRevenueTrend(int months = 6)
         {
             months = Math.Max(3, Math.Min(12, months));
-            var currentMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var startMonth = currentMonth.AddMonths(-(months - 1));
-            var endMonth = currentMonth.AddMonths(1);
+            var calendar = new PersianCalendar();
+            var today = DateTime.Today;
+            var currentMonth = calendar.ToDateTime(calendar.GetYear(today), calendar.GetMonth(today), 1, 0, 0, 0, 0);
+            var startMonth = calendar.AddMonths(currentMonth, -(months - 1));
+            var endMonth = calendar.AddMonths(currentMonth, 1);
             var totals = new Dictionary<string, decimal>(StringComparer.Ordinal);
 
             using (var connection = Database.Open())
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = @"SELECT substr(payment_date,1,7) AS month_key, COALESCE(SUM(amount),0)
+                command.CommandText = @"SELECT payment_date, amount
 FROM subscription_payments
 WHERE payment_date>=@start AND payment_date<@end
-GROUP BY substr(payment_date,1,7)
-ORDER BY month_key";
-                command.Parameters.AddWithValue("@start", startMonth.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                command.Parameters.AddWithValue("@end", endMonth.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+ORDER BY payment_date";
+                command.Parameters.AddWithValue("@start", DateService.Iso(startMonth));
+                command.Parameters.AddWithValue("@end", DateService.Iso(endMonth));
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        var key = Convert.ToString(reader.GetValue(0), CultureInfo.InvariantCulture) ?? "";
+                        var rawDate = reader.IsDBNull(0) ? "" : Convert.ToString(reader.GetValue(0), CultureInfo.InvariantCulture) ?? "";
+                        DateTime paymentDate;
+                        if (!DateService.TryParseIso(rawDate, out paymentDate)) continue;
+                        var key = SolarMonthKey(calendar, paymentDate);
                         var amount = reader.IsDBNull(1) ? 0m : Convert.ToDecimal(reader.GetValue(1), CultureInfo.InvariantCulture);
-                        if (!string.IsNullOrWhiteSpace(key)) totals[key] = amount;
+                        decimal current;
+                        totals.TryGetValue(key, out current);
+                        totals[key] = current + amount;
                     }
                 }
             }
@@ -41,18 +46,24 @@ ORDER BY month_key";
             var result = new List<RevenueTrendPoint>(months);
             for (var i = 0; i < months; i++)
             {
-                var month = startMonth.AddMonths(i);
-                var key = month.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+                var month = calendar.AddMonths(startMonth, i);
+                var key = SolarMonthKey(calendar, month);
                 decimal amount;
                 totals.TryGetValue(key, out amount);
                 result.Add(new RevenueTrendPoint
                 {
                     MonthKey = key,
-                    Label = DateService.SolarMonth(month.AddDays(14)),
+                    Label = key.Replace('-', '/'),
                     Amount = amount
                 });
             }
             return result;
+        }
+
+        private static string SolarMonthKey(PersianCalendar calendar, DateTime date)
+        {
+            return calendar.GetYear(date).ToString("0000", CultureInfo.InvariantCulture) + "-" +
+                   calendar.GetMonth(date).ToString("00", CultureInfo.InvariantCulture);
         }
     }
 }

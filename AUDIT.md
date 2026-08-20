@@ -18,9 +18,11 @@
 - [x] Windows CI uses isolated self-test data before packaging.
 - [x] Application, installer and artifact version bumped to 1.2.0.
 
-## Deliberate limitation
+## Deliberate limitations
 
 v1.2 remains a single-computer local SQLite application. A SQLite database file must not be shared directly over a normal network folder for simultaneous multi-computer use. Proper two-computer/multi-user support requires a local service/server layer and is a separate architecture change.
+
+Authentication in v1.2 remains one administrator account. Role-based admin/accountant/employee accounts belong with the future multi-user session/audit architecture rather than being patched into the single-user model.
 
 ## Release rule
 

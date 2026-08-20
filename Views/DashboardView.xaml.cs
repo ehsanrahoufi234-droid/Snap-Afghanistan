@@ -32,7 +32,7 @@ namespace SnapAfghanistan.Native.Views
 
         private void MakeHealthIndicatorClickable(TextBlock target, string status)
         {
-            UIElement clickable = target;
+            FrameworkElement clickable = target;
             var grid = target.Parent as Grid;
             var card = grid?.Parent as Border;
             if (card != null) clickable = card;

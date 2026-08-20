@@ -1,5 +1,5 @@
 #define AppName "Snap Afghanistan"
-#define AppVersion "1.2.0"
+#define AppVersion "1.2.1"
 [Setup]
 AppId={{47F26725-C9DA-42DD-A160-BFBA681D67E5}
 AppName={#AppName}
@@ -7,7 +7,7 @@ AppVersion={#AppVersion}
 DefaultDirName={autopf}\Snap Afghanistan
 DefaultGroupName=Snap Afghanistan
 OutputDir=installer-output
-OutputBaseFilename=SnapAfghanistan-Setup-1.2.0
+OutputBaseFilename=SnapAfghanistan-Setup-1.2.1
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern

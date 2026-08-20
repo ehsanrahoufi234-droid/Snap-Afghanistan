@@ -14,15 +14,31 @@ namespace SnapAfghanistan.Native.Views
     public partial class ReportsView : UserControl, IRefreshable
     {
         private sealed class ReportChoice { public string Key { get; set; } = ""; public string Name { get; set; } = ""; public override string ToString() => Name; }
-        private readonly SnapRepository _repository; private readonly Action<string> _toast; private DataTable? _table;
+        private readonly SnapRepository _repository;
+        private readonly Action<string> _toast;
+        private DataTable? _table;
+
         public ReportsView(SnapRepository repository, Action<string> toast)
         {
-            InitializeComponent(); _repository = repository; _toast = toast;
-            ReportType.ItemsSource = new[] { new ReportChoice { Key="members",Name="فهرست اعضا" }, new ReportChoice { Key="centers",Name="فهرست مراکز" }, new ReportChoice { Key="sectors",Name="فهرست سکتورها" }, new ReportChoice { Key="debtors",Name="مراکز بدهکار" }, new ReportChoice { Key="payments",Name="درآمد و پرداخت‌ها" } }; ReportType.SelectedIndex = 0;
-            MemberType.ItemsSource = new[] { "همه" }.Concat(SnapRepository.MemberTypes).ToArray(); MemberType.SelectedIndex = 0;
+            InitializeComponent();
+            _repository = repository;
+            _toast = toast;
+            ReportType.ItemsSource = new[]
+            {
+                new ReportChoice { Key="members",Name="فهرست اعضا" },
+                new ReportChoice { Key="centers",Name="فهرست مراکز" },
+                new ReportChoice { Key="sectors",Name="فهرست سکتورها" },
+                new ReportChoice { Key="debtors",Name="مراکز بدهکار" },
+                new ReportChoice { Key="payments",Name="درآمد و پرداخت‌ها" }
+            };
+            ReportType.SelectedIndex = 0;
+            MemberType.ItemsSource = new[] { "همه" }.Concat(SnapRepository.MemberTypes).ToArray();
+            MemberType.SelectedIndex = 0;
         }
+
         public void RefreshData() { if (_table == null) Preview(); }
         private void ReportType_Changed(object sender, SelectionChangedEventArgs e) { if (MemberType != null) MemberType.IsEnabled = ((ReportChoice)ReportType.SelectedItem).Key == "members"; }
+
         private void Grid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             e.Column.MinWidth = 125;
@@ -36,27 +52,57 @@ namespace SnapAfghanistan.Native.Views
                 textColumn.ElementStyle = cellStyle;
             }
         }
+
         private void Preview_Click(object sender, RoutedEventArgs e) => Preview();
+
         private void Preview()
         {
-            try { Mouse.OverrideCursor = Cursors.Wait; var choice = (ReportChoice)ReportType.SelectedItem; _table = _repository.BuildReport(choice.Key, Convert.ToString(MemberType.SelectedItem) ?? "همه"); Grid.ItemsSource = _table.DefaultView; CountText.Text = "تعداد ردیف: " + _table.Rows.Count.ToString("N0", CultureInfo.InvariantCulture); }
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                var choice = (ReportChoice)ReportType.SelectedItem;
+                _table = _repository.BuildReport(choice.Key, Convert.ToString(MemberType.SelectedItem) ?? "همه");
+                NormalizeDates(_table);
+                Grid.ItemsSource = _table.DefaultView;
+                CountText.Text = "تعداد ردیف: " + _table.Rows.Count.ToString("N0", CultureInfo.InvariantCulture);
+            }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "گزارش ساخته نشد", MessageBoxButton.OK, MessageBoxImage.Error); }
             finally { Mouse.OverrideCursor = null; }
         }
+
+        private static void NormalizeDates(DataTable table)
+        {
+            foreach (DataColumn column in table.Columns)
+            {
+                var dateColumn = column.ColumnName.Contains("تاریخ") || column.ColumnName.Contains("سررسید") || column.ColumnName.Contains("موعد");
+                if (!dateColumn) continue;
+                foreach (DataRow row in table.Rows)
+                {
+                    var raw = Convert.ToString(row[column], CultureInfo.InvariantCulture) ?? "";
+                    if (raw.Length < 10) continue;
+                    var iso = raw.Substring(0, 10);
+                    var solar = DateService.SolarFromIso(iso);
+                    if (!string.IsNullOrWhiteSpace(solar)) row[column] = solar;
+                }
+            }
+        }
+
         private void Pdf_Click(object sender, RoutedEventArgs e)
         {
             EnsureReport(); if (_table == null) return; var choice = (ReportChoice)ReportType.SelectedItem;
             var dialog = new SaveFileDialog { Title="ذخیره PDF",Filter="PDF|*.pdf",FileName="Snap-"+choice.Key+"-Report.pdf" }; if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
-            try { Mouse.OverrideCursor = Cursors.Wait; new ReportService().ExportTablePdf(_table, dialog.FileName, choice.Name, _repository.GetSettings().CompanyName); _toast("گزارش PDF با لوگو ساخته شد."); Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true }); }
+            try { Mouse.OverrideCursor = Cursors.Wait; new ReportService().ExportTablePdf(_table, dialog.FileName, choice.Name, _repository.GetSettings().CompanyName); _toast("گزارش PDF با تاریخ هجری شمسی ساخته شد."); Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true }); }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطای PDF", MessageBoxButton.OK, MessageBoxImage.Error); } finally { Mouse.OverrideCursor = null; }
         }
+
         private void Csv_Click(object sender, RoutedEventArgs e)
         {
             EnsureReport(); if (_table == null) return; var choice = (ReportChoice)ReportType.SelectedItem;
             var dialog = new SaveFileDialog { Title="ذخیره CSV",Filter="CSV|*.csv",FileName="Snap-"+choice.Key+"-Report.csv" }; if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
-            try { new ReportService().ExportCsv(_table, dialog.FileName); _toast("فایل CSV ساخته شد."); Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true }); }
+            try { new ReportService().ExportCsv(_table, dialog.FileName); _toast("فایل CSV با تاریخ هجری شمسی ساخته شد."); Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true }); }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطای CSV", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
+
         private void EnsureReport() { if (_table == null) Preview(); }
     }
 }

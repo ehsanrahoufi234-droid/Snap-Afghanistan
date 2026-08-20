@@ -17,7 +17,7 @@ namespace SnapAfghanistan.Native.Dialogs
             _record = record ?? new CenterRecord();
             SectorCombo.ItemsSource = repository.GetSectors(false);
             FeeBasisCombo.ItemsSource = new[] { "اشتراک ماهانه", "فیصدی بل", "مبلغ ثابت روزانه", "بدون حق‌الخدمت" };
-            StatusCombo.ItemsSource = new[] { "فعال", "غیرفعال", "بایگانی" };
+            StatusCombo.ItemsSource = new[] { "فعال", "غیرفعال" };
             LoadRecord();
         }
 
@@ -35,7 +35,7 @@ namespace SnapAfghanistan.Native.Dialogs
             AddressText.Text = _record.Address;
             FeeBasisCombo.SelectedItem = _record.FeeBasis;
             FeeAmountText.Text = _record.FeeAmount == 0 ? "" : _record.FeeAmount.ToString("0.##", CultureInfo.InvariantCulture);
-            StatusCombo.SelectedItem = string.IsNullOrWhiteSpace(_record.Status) ? "فعال" : _record.Status;
+            StatusCombo.SelectedItem = _record.Status == "غیرفعال" ? "غیرفعال" : "فعال";
             NotesText.Text = _record.Notes;
             DateTime date;
             if (DateService.TryParseIso(_record.ContractStart, out date)) { ContractStartText.Text = DateService.Solar(date); ContractStartGregorian.Text = "معادل میلادی: " + DateService.Gregorian(date); }

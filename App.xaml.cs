@@ -67,6 +67,7 @@ namespace SnapAfghanistan.Native
                 throw new InvalidOperationException("Database integrity self-test failed.");
 
             var repository = new SnapRepository();
+            var operations = new OperationsService();
             var suffix = Guid.NewGuid().ToString("N").Substring(0, 10);
 
             var sector = new SectorItem { Name = "آزمایش-" + suffix, Description = "self-test", Status = "فعال" };
@@ -98,7 +99,17 @@ namespace SnapAfghanistan.Native
             };
             repository.SaveCenter(center);
             repository.ConfigureSubscription(center.Id, 100m, DateTime.Today, DateTime.Today.AddMonths(1), false);
-            repository.RegisterPayment(center.Id, 100m, DateTime.Today, 1, "TEST-" + suffix, "native self-test");
+
+            var receipt = operations.RegisterPayment(center.Id, 100m, DateTime.Today, 1, "TEST-" + suffix, "native self-test");
+            var payment = repository.GetPayments(center.Id).FirstOrDefault(item => item.ReceiptNo == receipt);
+            if (payment == null) throw new InvalidOperationException("Payment create self-test failed.");
+            operations.UpdatePayment(payment, 125m, DateTime.Today, 1, receipt, "edited self-test");
+            payment = repository.GetPayments(center.Id).FirstOrDefault(item => item.ReceiptNo == receipt);
+            if (payment == null || payment.Amount != 125m) throw new InvalidOperationException("Payment edit self-test failed.");
+            operations.DeletePayment(payment);
+            if (repository.GetPayments(center.Id).Any(item => item.Id == payment.Id))
+                throw new InvalidOperationException("Payment delete self-test failed.");
+            operations.RegisterPayment(center.Id, 100m, DateTime.Today, 1, "TEST2-" + suffix, "native self-test");
 
             var note = new NoteItem
             {
@@ -119,6 +130,13 @@ namespace SnapAfghanistan.Native
             var paymentTable = repository.BuildReport("payments");
             if (memberTable.Rows.Count < 1 || centerTable.Rows.Count < 1 || paymentTable.Rows.Count < 1)
                 throw new InvalidOperationException("Report data self-test failed.");
+
+            repository.ArchiveMember(member.Id);
+            var archivedMember = operations.GetArchived("عضو").FirstOrDefault(item => item.EntityId == member.Id);
+            if (archivedMember == null) throw new InvalidOperationException("Archive self-test failed.");
+            operations.RestoreArchived(archivedMember);
+            var restoredMember = repository.GetMember(member.Id);
+            if (restoredMember == null || restoredMember.Status != "فعال") throw new InvalidOperationException("Archive restore self-test failed.");
 
             repository.DeleteMember(member.Id);
             var trashMember = repository.GetTrash().FirstOrDefault(item => item.EntityType == "عضو" && item.EntityId == member.Id);

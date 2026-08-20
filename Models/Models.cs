@@ -25,6 +25,14 @@ namespace SnapAfghanistan.Native.Models
         public Dictionary<string, long> MemberTypes { get; set; } = new Dictionary<string, long>();
     }
 
+    public sealed class RevenueTrendPoint
+    {
+        public string MonthKey { get; set; } = "";
+        public string Label { get; set; } = "";
+        public decimal Amount { get; set; }
+        public string AmountText => Amount.ToString("N0", CultureInfo.InvariantCulture) + " افغانی";
+    }
+
     public sealed class MemberListItem
     {
         public string Id { get; set; } = "";
@@ -67,6 +75,7 @@ namespace SnapAfghanistan.Native.Models
         public string Description { get; set; } = "";
         public string Status { get; set; } = "فعال";
         public long CenterCount { get; set; }
+        public override string ToString() => Name;
     }
 
     public sealed class CenterListItem

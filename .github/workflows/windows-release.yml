@@ -58,20 +58,21 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SnapAfghanistan-Windows-Setup-1.2.0
-          path: installer-output/SnapAfghanistan-Setup-1.2.0.exe
+          name: SnapAfghanistan-Windows-Setup-1.2.1
+          path: installer-output/SnapAfghanistan-Setup-1.2.1.exe
           if-no-files-found: error
 
       - name: Publish preview release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.0-preview
-          name: Snap Afghanistan 1.2.0 Preview
+          tag_name: v1.2.1-preview
+          name: Snap Afghanistan 1.2.1 Preview
           prerelease: true
           make_latest: false
-          files: installer-output/SnapAfghanistan-Setup-1.2.0.exe
+          files: installer-output/SnapAfghanistan-Setup-1.2.1.exe
           body: |
-            نسخه ۱.۲ آزمایشی اسنپ افغانستان برای Windows 10/11.
-            رابط ورود و منوی راست‌به‌چپ اصلاح شده، بکاپ و بازیابی سخت‌گیرانه‌تر شده و آزمون خودکار عملیات اصلی دیتابیس، گزارش PDF و بکاپ پیش از ساخت Installer اجرا می‌شود.
+            نسخه ۱.۲.۱ آزمایشی اسنپ افغانستان برای Windows 10/11.
+            نمایش سکتورها اصلاح شده و داشبورد با شاخص‌های روشن‌تر و نمودار درآمد شش ماه اخیر بازطراحی شده است.
+            بکاپ و بازیابی سخت‌گیرانه و آزمون خودکار عملیات اصلی دیتابیس، گزارش PDF و بکاپ پیش از ساخت Installer اجرا می‌شوند.
             داده‌های کاربر جدا از فایل‌های برنامه در LocalAppData نگهداری می‌شوند.

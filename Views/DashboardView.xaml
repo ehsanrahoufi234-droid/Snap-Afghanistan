@@ -1,75 +1,269 @@
 <UserControl x:Class="SnapAfghanistan.Native.Views.DashboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" FlowDirection="RightToLeft">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FlowDirection="RightToLeft">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel>
-            <UniformGrid Rows="1" Columns="4">
-                <Border Style="{StaticResource CardStyle}" BorderBrush="#A8D8CA" Background="#F4FBF8" MinHeight="112">
-                    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="52"/></Grid.ColumnDefinitions>
-                        <StackPanel><TextBlock Text="اعضای فعال" Foreground="#3C7061" FontWeight="SemiBold"/><TextBlock x:Name="ActiveMembers" Text="۰" FontSize="29" FontWeight="SemiBold" Foreground="#087E61" Margin="0,10,0,0"/></StackPanel>
-                        <Border Grid.Column="1" Width="48" Height="48" Background="#D9F2EA" CornerRadius="14"><TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="19" Foreground="#087E61" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+        <Grid Margin="0,0,0,2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="14"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="14"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Primary indicators -->
+            <UniformGrid Grid.Row="0" Rows="1" Columns="4">
+                <Border CornerRadius="18" BorderBrush="#CDE7DF" BorderThickness="1" MinHeight="108" Padding="18" Margin="0,0,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#F7FCFA" Offset="0"/>
+                            <GradientStop Color="#E9F7F2" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="50"/></Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="اعضای فعال" Foreground="#577268" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="ActiveMembers" Text="0" FontSize="30" FontWeight="SemiBold" Foreground="#087E61" Margin="0,6,0,0"/>
+                            <TextBlock Text="عضو دارای وضعیت فعال" Foreground="#789087" FontSize="10" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Width="46" Height="46" CornerRadius="14" Background="#D8F1E8" VerticalAlignment="Top">
+                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#087E61" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
                     </Grid>
                 </Border>
-                <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#B9D1EE" Background="#F5F8FD" MinHeight="112">
-                    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="52"/></Grid.ColumnDefinitions>
-                        <StackPanel><TextBlock Text="مراکز ثبت‌شده" Foreground="#4D6281" FontWeight="SemiBold"/><TextBlock x:Name="Centers" Text="۰" FontSize="29" FontWeight="SemiBold" Foreground="#2B67C8" Margin="0,10,0,0"/></StackPanel>
-                        <Border Grid.Column="1" Width="48" Height="48" Background="#DEE9F9" CornerRadius="14"><TextBlock Text="&#xE719;" FontFamily="Segoe MDL2 Assets" FontSize="19" Foreground="#2B67C8" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+
+                <Border CornerRadius="18" BorderBrush="#D2E1F3" BorderThickness="1" MinHeight="108" Padding="18" Margin="12,0,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#F9FBFE" Offset="0"/>
+                            <GradientStop Color="#EDF4FC" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="50"/></Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="مراکز ثبت‌شده" Foreground="#5D6F86" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="Centers" Text="0" FontSize="30" FontWeight="SemiBold" Foreground="#2B67C8" Margin="0,6,0,0"/>
+                            <TextBlock Text="مرکز همکار در سیستم" Foreground="#7E8C9D" FontSize="10" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Width="46" Height="46" CornerRadius="14" Background="#DDEAF9" VerticalAlignment="Top">
+                            <TextBlock Text="&#xE719;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#2B67C8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
                     </Grid>
                 </Border>
-                <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#EFD2A6" Background="#FFF9F0" MinHeight="112">
-                    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="52"/></Grid.ColumnDefinitions>
-                        <StackPanel><TextBlock Text="نزدیک سررسید" Foreground="#825C2B" FontWeight="SemiBold"/><TextBlock x:Name="NearDue" Text="۰" FontSize="29" FontWeight="SemiBold" Foreground="#D37B13" Margin="0,10,0,0"/></StackPanel>
-                        <Border Grid.Column="1" Width="48" Height="48" Background="#FBE8CB" CornerRadius="14"><TextBlock Text="&#xE787;" FontFamily="Segoe MDL2 Assets" FontSize="19" Foreground="#D37B13" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+
+                <Border CornerRadius="18" BorderBrush="#CFE8DF" BorderThickness="1" MinHeight="108" Padding="18" Margin="12,0,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FAFDFC" Offset="0"/>
+                            <GradientStop Color="#EDF8F4" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="50"/></Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="درآمد ماه جاری" Foreground="#577268" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="MonthRevenue" Text="0 افغانی" FontSize="25" FontWeight="SemiBold" Foreground="#087E61" Margin="0,8,0,0"/>
+                            <TextBlock Text="بر اساس پرداخت‌های ثبت‌شده" Foreground="#789087" FontSize="10" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Width="46" Height="46" CornerRadius="14" Background="#DDF3EB" VerticalAlignment="Top">
+                            <TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#087E61" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
                     </Grid>
                 </Border>
-                <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#EDB8C0" Background="#FFF5F6" MinHeight="112">
-                    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="52"/></Grid.ColumnDefinitions>
-                        <StackPanel><TextBlock Text="اشتراک معوق" Foreground="#824653" FontWeight="SemiBold"/><TextBlock x:Name="Overdue" Text="۰" FontSize="29" FontWeight="SemiBold" Foreground="#C73348" Margin="0,10,0,0"/></StackPanel>
-                        <Border Grid.Column="1" Width="48" Height="48" Background="#F8DDE2" CornerRadius="14"><TextBlock Text="!" FontSize="21" FontWeight="Bold" Foreground="#C73348" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+
+                <Border CornerRadius="18" BorderBrush="#F0D4D9" BorderThickness="1" MinHeight="108" Padding="18" Margin="12,0,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FFFBFB" Offset="0"/>
+                            <GradientStop Color="#FCEFF1" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="50"/></Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="اشتراک‌های معوق" Foreground="#80545D" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="Overdue" Text="0" FontSize="30" FontWeight="SemiBold" Foreground="#C73348" Margin="0,6,0,0"/>
+                            <TextBlock Text="مرکز گذشته از سررسید" Foreground="#9B737B" FontSize="10" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Width="46" Height="46" CornerRadius="14" Background="#F7DDE2" VerticalAlignment="Top">
+                            <TextBlock Text="!" FontSize="20" FontWeight="Bold" Foreground="#C73348" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
                     </Grid>
                 </Border>
             </UniformGrid>
 
-            <Grid Margin="0,14,0,0">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="1.65*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+            <!-- Revenue analytics + subscription health -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.9*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="0.9*"/>
+                </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
-                    <StackPanel>
-                        <Grid>
-                            <StackPanel><TextBlock Text="ترکیب اعضای اسنپ" Style="{StaticResource SectionTitleStyle}"/><TextBlock Text="تعداد اعضای فعال در هر گروه" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,0"/></StackPanel>
-                            <Border Width="38" Height="38" Background="#EDF4F8" CornerRadius="11" HorizontalAlignment="Left"><TextBlock Text="&#xE9D2;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource PrimaryBrush}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Grid.Column="0" Style="{StaticResource ElevatedCardStyle}" Padding="20" CornerRadius="18">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="210"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="روند درآمد 6 ماه اخیر" Style="{StaticResource SectionTitleStyle}"/>
+                                <TextBlock Text="مبالغ واقعی دریافت‌شده از اشتراک مراکز" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <Border Grid.Column="1" Background="#EAF7F3" BorderBrush="#D2EBE3" BorderThickness="1" CornerRadius="12" Padding="13,8" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="●" Foreground="{StaticResource EmeraldBrush}" Margin="0,0,7,0"/>
+                                    <TextBlock Text="پرداخت ثبت‌شده" Foreground="#47695F" FontSize="11" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Border>
                         </Grid>
-                        <UniformGrid Rows="1" Columns="5" Margin="0,18,0,0">
-                            <Border Background="#EAF7F3" BorderBrush="#CDEADF" BorderThickness="1" CornerRadius="12" Padding="13"><StackPanel><TextBlock Text="معلم" Foreground="#427163" FontWeight="SemiBold"/><TextBlock x:Name="Teachers" Text="۰" FontSize="24" FontWeight="SemiBold" Foreground="#087E61" Margin="0,8,0,0"/></StackPanel></Border>
-                            <Border Background="#EBF3FC" BorderBrush="#D4E3F5" BorderThickness="1" CornerRadius="12" Padding="13" Margin="8,0,0,0"><StackPanel><TextBlock Text="عالم" Foreground="#496786" FontWeight="SemiBold"/><TextBlock x:Name="Scholars" Text="۰" FontSize="24" FontWeight="SemiBold" Foreground="#2B67C8" Margin="0,8,0,0"/></StackPanel></Border>
-                            <Border Background="#F1EDFA" BorderBrush="#E1D9F1" BorderThickness="1" CornerRadius="12" Padding="13" Margin="8,0,0,0"><StackPanel><TextBlock Text="استاد پوهنتون" Foreground="#685487" FontWeight="SemiBold" FontSize="11"/><TextBlock x:Name="Professors" Text="۰" FontSize="24" FontWeight="SemiBold" Foreground="#7654AF" Margin="0,8,0,0"/></StackPanel></Border>
-                            <Border Background="#FFF5E7" BorderBrush="#F2DFC3" BorderThickness="1" CornerRadius="12" Padding="13" Margin="8,0,0,0"><StackPanel><TextBlock Text="فرهنگی" Foreground="#8C622C" FontWeight="SemiBold"/><TextBlock x:Name="Cultural" Text="۰" FontSize="24" FontWeight="SemiBold" Foreground="#D98519" Margin="0,8,0,0"/></StackPanel></Border>
-                            <Border Background="#FCEAEC" BorderBrush="#F0D2D7" BorderThickness="1" CornerRadius="12" Padding="13" Margin="8,0,0,0"><StackPanel><TextBlock Text="شاگرد" Foreground="#8B4D58" FontWeight="SemiBold"/><TextBlock x:Name="Students" Text="۰" FontSize="24" FontWeight="SemiBold" Foreground="#C73348" Margin="0,8,0,0"/></StackPanel></Border>
-                        </UniformGrid>
-                    </StackPanel>
+
+                        <Grid Grid.Row="1" Margin="0,16,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="1"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="1"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="جمع 6 ماه" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="SixMonthRevenue" Text="0 افغانی" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource InkBrush}" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <Border Grid.Column="1" Background="{StaticResource LineBrush}" Margin="16,2"/>
+                            <StackPanel Grid.Column="2" Margin="18,0">
+                                <TextBlock Text="میانگین ماهانه" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="AverageRevenue" Text="0 افغانی" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource InkBrush}" Margin="0,5,0,0"/>
+                            </StackPanel>
+                            <Border Grid.Column="3" Background="{StaticResource LineBrush}" Margin="16,2"/>
+                            <StackPanel Grid.Column="4" Margin="18,0,0,0">
+                                <TextBlock Text="بهترین ماه" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="PeakMonth" Text="—" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}" Margin="0,6,0,0" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Grid.Row="2" Background="#FBFDFE" BorderBrush="#E5EDF2" BorderThickness="1" CornerRadius="14" Padding="8" Margin="0,6,0,0" ClipToBounds="True">
+                            <Viewbox Stretch="Fill" StretchDirection="Both">
+                                <Canvas Width="720" Height="190" FlowDirection="LeftToRight">
+                                    <Line X1="26" Y1="36" X2="694" Y2="36" Stroke="#E8EEF2" StrokeThickness="1" StrokeDashArray="4 4"/>
+                                    <Line X1="26" Y1="82" X2="694" Y2="82" Stroke="#E8EEF2" StrokeThickness="1" StrokeDashArray="4 4"/>
+                                    <Line X1="26" Y1="128" X2="694" Y2="128" Stroke="#E8EEF2" StrokeThickness="1" StrokeDashArray="4 4"/>
+                                    <Line X1="26" Y1="168" X2="694" Y2="168" Stroke="#DCE6ED" StrokeThickness="1"/>
+                                    <Polygon x:Name="RevenueArea" Fill="#180B806D"/>
+                                    <Polyline x:Name="RevenueLine" Stroke="#0B806D" StrokeThickness="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                    <Canvas x:Name="RevenuePointLayer" Width="720" Height="190"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+
+                        <ItemsControl x:Name="RevenueMonths" Grid.Row="3" Margin="8,8,8,0" FlowDirection="LeftToRight">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><UniformGrid Rows="1" Columns="6"/></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Label}" HorizontalAlignment="Center" Foreground="#6D7F8F" FontSize="10" FontWeight="SemiBold"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
                 </Border>
 
-                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20">
-                    <StackPanel>
-                        <TextBlock Text="وضعیت اشتراک‌ها" Style="{StaticResource SectionTitleStyle}"/>
-                        <TextBlock Text="نمای مالی ماه جاری" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,16"/>
-                        <Border Background="#E8F5F1" BorderBrush="#D0EAE2" BorderThickness="1" CornerRadius="12" Padding="15">
-                            <StackPanel><TextBlock Text="درآمد ثبت‌شده این ماه" Foreground="#497266"/><TextBlock x:Name="MonthRevenue" Text="۰ افغانی" Foreground="#087E61" FontSize="22" FontWeight="SemiBold" Margin="0,7,0,0"/></StackPanel>
+                <Border Grid.Column="2" Style="{StaticResource ElevatedCardStyle}" Padding="19" CornerRadius="18">
+                    <Grid>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="سلامت اشتراک‌ها" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="مواردی که نیاز به پیگیری دارند" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <Border Grid.Row="1" Background="#FFF7EA" BorderBrush="#F2E0BF" BorderThickness="1" CornerRadius="13" Padding="14" Margin="0,16,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="نزدیک سررسید" Foreground="#7C6238" FontSize="11"/>
+                                    <TextBlock Text="نیاز به یادآوری" Foreground="#A18B67" FontSize="10" Margin="0,3,0,0"/>
+                                </StackPanel>
+                                <TextBlock x:Name="NearDueSmall" Grid.Column="1" Text="0" FontSize="26" FontWeight="SemiBold" Foreground="#D88920" VerticalAlignment="Center"/>
+                            </Grid>
                         </Border>
-                        <Grid Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="10"/><ColumnDefinition/></Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Background="#FFF4E5" CornerRadius="10" Padding="12"><StackPanel><TextBlock Text="نزدیک سررسید" Foreground="#805C31" FontSize="11"/><TextBlock x:Name="NearDueSmall" FontSize="19" FontWeight="SemiBold" Foreground="#D98519" Margin="0,5,0,0"/></StackPanel></Border>
-                            <Border Grid.Column="2" Background="#FBEAEC" CornerRadius="10" Padding="12"><StackPanel><TextBlock Text="تعلیق" Foreground="#87515B" FontSize="11"/><TextBlock x:Name="Suspended" FontSize="19" FontWeight="SemiBold" Foreground="#C73348" Margin="0,5,0,0"/></StackPanel></Border>
-                        </Grid>
-                    </StackPanel>
+
+                        <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                            <Border Background="#FFF1F3" BorderBrush="#F0D6DA" BorderThickness="1" CornerRadius="13" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel><TextBlock Text="معوق" Foreground="#80545D" FontSize="11"/><TextBlock Text="از سررسید گذشته" Foreground="#9B737B" FontSize="10" Margin="0,3,0,0"/></StackPanel>
+                                    <TextBlock x:Name="OverdueSmall" Grid.Column="1" Text="0" FontSize="24" FontWeight="SemiBold" Foreground="#C73348" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                            <Border Background="#F3F4F8" BorderBrush="#E0E3EB" BorderThickness="1" CornerRadius="13" Padding="14" Margin="0,10,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel><TextBlock Text="تعلیق" Foreground="#5F6574" FontSize="11"/><TextBlock Text="فعلاً متوقف" Foreground="#858B98" FontSize="10" Margin="0,3,0,0"/></StackPanel>
+                                    <TextBlock x:Name="Suspended" Grid.Column="1" Text="0" FontSize="24" FontWeight="SemiBold" Foreground="#6C7080" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <Border Grid.Row="3" Background="#EEF7FA" CornerRadius="12" Padding="12" Margin="0,12,0,0">
+                            <TextBlock Text="سررسیدها از تاریخ پرداخت و تنظیم اشتراک محاسبه می‌شوند." Foreground="#526F7E" FontSize="10" TextWrapping="Wrap"/>
+                        </Border>
+                    </Grid>
                 </Border>
             </Grid>
 
-            <Border Style="{StaticResource CardStyle}" Margin="0,14,0,0" Padding="17,13" Background="#F9FCFD">
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel><TextBlock Text="سامانه آماده کار روزانه است" FontWeight="SemiBold" FontSize="14"/><TextBlock x:Name="Summary" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,0"/></StackPanel>
-                    <Border Grid.Column="1" Background="#E8F5F1" CornerRadius="10" Padding="13,8" VerticalAlignment="Center"><TextBlock Text="●  دیتابیس محلی — بدون مرورگر" Foreground="{StaticResource EmeraldBrush}" FontWeight="SemiBold" FontSize="11"/></Border>
-                </Grid>
-            </Border>
-        </StackPanel>
+            <!-- Member mix and operational snapshot -->
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.9*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="0.9*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="18" CornerRadius="18">
+                    <Grid>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="ترکیب اعضای فعال" Style="{StaticResource SectionTitleStyle}" FontSize="17"/>
+                                <TextBlock Text="توزیع پنج گروه اصلی اسنپ" Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                        <UniformGrid Grid.Row="1" Rows="1" Columns="5" Margin="0,14,0,0">
+                            <Border Background="#F0F8F5" CornerRadius="11" Padding="12"><StackPanel><TextBlock Text="معلم" Foreground="#507368" FontSize="10"/><TextBlock x:Name="Teachers" Text="0" FontSize="21" FontWeight="SemiBold" Foreground="#087E61" Margin="0,5,0,0"/></StackPanel></Border>
+                            <Border Background="#F1F6FC" CornerRadius="11" Padding="12" Margin="8,0,0,0"><StackPanel><TextBlock Text="عالم" Foreground="#536B84" FontSize="10"/><TextBlock x:Name="Scholars" Text="0" FontSize="21" FontWeight="SemiBold" Foreground="#2B67C8" Margin="0,5,0,0"/></StackPanel></Border>
+                            <Border Background="#F5F2FA" CornerRadius="11" Padding="12" Margin="8,0,0,0"><StackPanel><TextBlock Text="استاد پوهنتون" Foreground="#6C5E7C" FontSize="10"/><TextBlock x:Name="Professors" Text="0" FontSize="21" FontWeight="SemiBold" Foreground="#7654AF" Margin="0,5,0,0"/></StackPanel></Border>
+                            <Border Background="#FFF8EE" CornerRadius="11" Padding="12" Margin="8,0,0,0"><StackPanel><TextBlock Text="فرهنگی" Foreground="#826947" FontSize="10"/><TextBlock x:Name="Cultural" Text="0" FontSize="21" FontWeight="SemiBold" Foreground="#D88920" Margin="0,5,0,0"/></StackPanel></Border>
+                            <Border Background="#FFF2F4" CornerRadius="11" Padding="12" Margin="8,0,0,0"><StackPanel><TextBlock Text="شاگرد" Foreground="#805962" FontSize="10"/><TextBlock x:Name="Students" Text="0" FontSize="21" FontWeight="SemiBold" Foreground="#C73348" Margin="0,5,0,0"/></StackPanel></Border>
+                        </UniformGrid>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="18" CornerRadius="18" Background="#FAFCFD">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="نمای کلی دفتر" FontWeight="SemiBold" FontSize="15"/>
+                            <TextBlock x:Name="Summary" Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="سکتور فعال: " Foreground="#6B7D8D" FontSize="10"/>
+                                <TextBlock x:Name="ActiveSectors" Text="0" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold" FontSize="10"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="#E8F5F1" CornerRadius="12" Padding="11" VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource EmeraldBrush}" FontSize="18" HorizontalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
     </ScrollViewer>
 </UserControl>

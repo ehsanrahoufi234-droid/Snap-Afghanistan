@@ -8,24 +8,30 @@ namespace SnapAfghanistan.Native.Data
 {
     public static class Database
     {
-        public static readonly string RootDirectory = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SnapAfghanistan");
+        public const int CurrentSchemaVersion = 4;
 
+        public static readonly string RootDirectory = ResolveRootDirectory();
         public static readonly string DataDirectory = System.IO.Path.Combine(RootDirectory, "Data");
         public static readonly string AttachmentsDirectory = System.IO.Path.Combine(DataDirectory, "attachments");
         public static readonly string BackupsDirectory = System.IO.Path.Combine(DataDirectory, "backups");
         public static readonly string LogDirectory = System.IO.Path.Combine(RootDirectory, "Logs");
         public static readonly string PathName = System.IO.Path.Combine(DataDirectory, "snap.db");
 
+        private static string ResolveRootDirectory()
+        {
+            var overridePath = Environment.GetEnvironmentVariable("SNAP_DATA_ROOT");
+            if (!string.IsNullOrWhiteSpace(overridePath)) return System.IO.Path.GetFullPath(overridePath.Trim());
+            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SnapAfghanistan");
+        }
+
         public static SQLiteConnection Open()
         {
             var connection = new SQLiteConnection(
-                "Data Source=" + PathName + ";Version=3;Foreign Keys=True;Pooling=True;Max Pool Size=20;");
+                "Data Source=" + PathName + ";Version=3;Foreign Keys=True;Pooling=True;Max Pool Size=20;Journal Mode=WAL;");
             connection.Open();
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "PRAGMA foreign_keys=ON; PRAGMA busy_timeout=10000;";
+                command.CommandText = "PRAGMA foreign_keys=ON; PRAGMA busy_timeout=10000; PRAGMA synchronous=NORMAL;";
                 command.ExecuteNonQuery();
             }
             return connection;
@@ -41,16 +47,15 @@ namespace SnapAfghanistan.Native.Data
             using (var connection = Open())
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;";
+                command.CommandText = "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA temp_store=MEMORY;";
                 command.ExecuteNonQuery();
-
                 command.CommandText = Schema;
                 command.ExecuteNonQuery();
             }
 
             ApplyMigrations();
             SeedDefaults();
-            SetSetting("schema_version", "3");
+            SetSetting("schema_version", CurrentSchemaVersion.ToString(CultureInfo.InvariantCulture));
         }
 
         public static string GetSetting(string key, string fallback = "")
@@ -74,6 +79,16 @@ namespace SnapAfghanistan.Native.Data
                 command.Parameters.AddWithValue("@key", key);
                 command.Parameters.AddWithValue("@value", value ?? "");
                 command.ExecuteNonQuery();
+            }
+        }
+
+        public static string IntegrityCheck()
+        {
+            using (var connection = Open())
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "PRAGMA quick_check;";
+                return Convert.ToString(command.ExecuteScalar(), CultureInfo.InvariantCulture) ?? "unknown";
             }
         }
 
@@ -120,6 +135,15 @@ namespace SnapAfghanistan.Native.Data
             EnsureColumn("partners", "archived_at", "TEXT");
             EnsureColumn("partners", "deleted_at", "TEXT");
             EnsureColumn("notes", "deleted_at", "TEXT");
+            EnsureColumn("audit_log", "actor", "TEXT");
+            EnsureColumn("audit_log", "machine_name", "TEXT");
+
+            using (var connection = Open())
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "PRAGMA user_version=" + CurrentSchemaVersion.ToString(CultureInfo.InvariantCulture) + ";";
+                command.ExecuteNonQuery();
+            }
         }
 
         private static void EnsureColumn(string table, string column, string definition)
@@ -150,7 +174,8 @@ namespace SnapAfghanistan.Native.Data
                 { "province", "هرات" },
                 { "member_code_prefix", "SNP-HRT" },
                 { "due_reminder_days", "7" },
-                { "auto_backup", "1" }
+                { "auto_backup", "1" },
+                { "last_auto_backup_date", "" }
             };
 
             using (var connection = Open())
@@ -313,8 +338,11 @@ CREATE TABLE IF NOT EXISTS audit_log(
     entity_id TEXT NOT NULL,
     action TEXT NOT NULL,
     summary TEXT,
+    actor TEXT,
+    machine_name TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_audit_entity ON audit_log(entity_type,entity_id,created_at);
 ";
     }
 }

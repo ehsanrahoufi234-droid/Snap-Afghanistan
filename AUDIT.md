@@ -1,30 +1,29 @@
 # Snap Afghanistan — Stabilization Audit
 
-This file tracks the stabilization work for the next desktop build.
+## v1.2 stabilization status
 
-## Audit priorities
+- [x] Native WPF desktop architecture retained; no browser wrapper.
+- [x] Login layout made responsive for Windows scaling and smaller displays.
+- [x] Main shell RTL hierarchy corrected: titles first from the right, icons to the left.
+- [x] Logo/title order normalized in the right navigation.
+- [x] Member CRUD, archive, soft-delete, restore, attachment and individual PDF paths audited.
+- [x] Sector/center CRUD and subscription/payment flows audited.
+- [x] Reports for members, centers, sectors, debtors and payments audited.
+- [x] SQLite uses foreign keys, WAL, busy timeout and schema version 4.
+- [x] Database quick integrity-check helper added.
+- [x] Backup contains database + attachments + manifest + database SHA-256.
+- [x] Restore validates the backup, creates an emergency backup first and rolls back automatically on failure.
+- [x] ZIP restore blocks unsafe path traversal and enforces extracted-size limits.
+- [x] Self-test uses an isolated data root and exercises CRUD, subscription payment, trash restore, reports, PDF and backup.
+- [x] Windows CI uses isolated self-test data before packaging.
+- [x] Application, installer and artifact version bumped to 1.2.0.
 
-1. Login and authentication flow
-2. RTL layout consistency and responsive desktop sizing
-3. Dashboard/navigation correctness
-4. Member CRUD and attachment handling
-5. Centers/sectors and subscription accounting
-6. Backup/restore safety
-7. Database integrity and migrations
-8. Installer/build pipeline
-9. Performance and startup behavior
-10. Release smoke tests
+## Deliberate limitations
 
-## Initial findings
+v1.2 remains a single-computer local SQLite application. A SQLite database file must not be shared directly over a normal network folder for simultaneous multi-computer use. Proper two-computer/multi-user support requires a local service/server layer and is a separate architecture change.
 
-- The application is a native WPF desktop application and not a browser wrapper.
-- Data is stored under `%LOCALAPPDATA%\\SnapAfghanistan\\Data`.
-- SQLite is configured with foreign keys, WAL mode and a busy timeout.
-- Authentication currently supports one administrator identity only; role-based users are not yet implemented.
-- The login window is hard-coded as maximized with fixed minimum column widths, which can cause layout problems on smaller displays or unusual scaling.
-- The current migration mechanism is column-existence based and sets `schema_version` to a fixed value after startup; it needs a versioned migration path before the data model grows further.
-- The build workflow creates a Windows installer and runs a native self-test before packaging.
+Authentication in v1.2 remains one administrator account. Role-based admin/accountant/employee accounts belong with the future multi-user session/audit architecture rather than being patched into the single-user model.
 
-## Rule for stabilization
+## Release rule
 
-No destructive rewrite of the current main branch. Changes should be isolated, tested, and merged only after the installer build passes.
+The stabilization branch is merged only after the Windows build, native self-test and Setup.exe packaging all pass.

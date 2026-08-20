@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -39,12 +40,14 @@ namespace SnapAfghanistan.Native.Views
             {
                 var status = Convert.ToString(StatusFilter.SelectedItem) ?? "همه";
                 var data = _repository.SearchCenters(SearchText.Text, "همه", status, 1, 500);
-                Grid.ItemsSource = data.Items;
+                var visible = data.Items.Where(item => item.Status != "بایگانی").ToList();
+                Grid.ItemsSource = visible;
                 var stats = _repository.GetDashboard();
                 RevenueCard.Text = stats.MonthRevenue.ToString("N0", CultureInfo.InvariantCulture) + " افغانی";
                 NearCard.Text = stats.NearDue.ToString("N0", CultureInfo.InvariantCulture);
                 OverdueCard.Text = stats.Overdue.ToString("N0", CultureInfo.InvariantCulture);
-                ActiveCard.Text = _repository.SearchCenters("", "همه", "فعال", 1, 25).Total.ToString("N0", CultureInfo.InvariantCulture);
+                var active = _repository.SearchCenters("", "همه", "فعال", 1, 500).Items.Count(item => item.Status != "بایگانی");
+                ActiveCard.Text = active.ToString("N0", CultureInfo.InvariantCulture);
             }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطا", MessageBoxButton.OK, MessageBoxImage.Error); }
         }

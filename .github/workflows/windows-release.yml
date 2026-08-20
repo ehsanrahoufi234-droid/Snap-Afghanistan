@@ -53,18 +53,18 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SnapAfghanistan-Windows-Setup
-          path: installer-output/SnapAfghanistan-Setup-1.0.0.exe
+          path: installer-output/SnapAfghanistan-Setup-1.1.0.exe
           if-no-files-found: error
 
       - name: Publish preview release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0-preview
-          name: Snap Afghanistan 1.0.0 Preview
+          tag_name: v1.1.0-preview
+          name: Snap Afghanistan 1.1.0 Preview
           prerelease: true
           make_latest: false
-          files: installer-output/SnapAfghanistan-Setup-1.0.0.exe
+          files: installer-output/SnapAfghanistan-Setup-1.1.0.exe
           body: |
-            نسخه آزمایشی نصبی ویندوز — بدون مرورگر و بدون سرور محلی.
+            نسخه ۱.۱ با طراحی جدید، رابط راست‌به‌چپ منظم و اجرای بومی ویندوز.
             داده‌ها در LocalAppData نگهداری می‌شوند و با آپدیت حذف نمی‌شوند.

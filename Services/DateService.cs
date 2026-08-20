@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Globalization;
 
 namespace SnapAfghanistan.Native.Services
@@ -52,6 +53,22 @@ namespace SnapAfghanistan.Native.Services
             catch (ArgumentOutOfRangeException)
             {
                 return false;
+            }
+        }
+
+        public static void NormalizeReportDates(DataTable table)
+        {
+            foreach (DataColumn column in table.Columns)
+            {
+                var dateColumn = column.ColumnName.Contains("تاریخ") || column.ColumnName.Contains("سررسید") || column.ColumnName.Contains("موعد");
+                if (!dateColumn) continue;
+                foreach (DataRow row in table.Rows)
+                {
+                    var raw = Convert.ToString(row[column], CultureInfo.InvariantCulture) ?? "";
+                    if (raw.Length < 10) continue;
+                    var solar = SolarFromIso(raw.Substring(0, 10));
+                    if (!string.IsNullOrWhiteSpace(solar)) row[column] = solar;
+                }
             }
         }
 

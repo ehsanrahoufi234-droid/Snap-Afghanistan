@@ -14,7 +14,7 @@
 - [x] Backup contains database + attachments + manifest + database SHA-256.
 - [x] Restore validates the backup, creates an emergency backup first and rolls back automatically on failure.
 - [x] ZIP restore blocks unsafe path traversal and enforces extracted-size limits.
-- [x] Self-test can use an isolated data root and exercises core CRUD, reports, PDF and backup.
+- [x] Self-test uses an isolated data root and exercises CRUD, subscription payment, trash restore, reports, PDF and backup.
 - [x] Windows CI uses isolated self-test data before packaging.
 - [x] Application, installer and artifact version bumped to 1.2.0.
 

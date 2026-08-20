@@ -5,61 +5,16 @@
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
 
         <UniformGrid Rows="1" Columns="4" Margin="0,0,0,12">
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,0" BorderBrush="#A8D8CA" Background="#F4FBF8" MinHeight="108">
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
-                    <StackPanel><TextBlock Text="درآمد ماه جاری" Foreground="#3E7164" FontWeight="SemiBold"/><TextBlock x:Name="RevenueCard" Text="۰ افغانی" FontSize="24" FontWeight="SemiBold" Foreground="#087E61" Margin="0,10,0,0"/></StackPanel>
-                    <Border Grid.Column="1" Width="44" Height="44" Background="#D9F2EA" CornerRadius="13"><TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#087E61" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-                </Grid>
-            </Border>
-            <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#B9D1EE" Background="#F5F8FD" MinHeight="108">
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
-                    <StackPanel><TextBlock Text="اشتراک فعال" Foreground="#4D6281" FontWeight="SemiBold"/><TextBlock x:Name="ActiveCard" Text="۰" FontSize="27" FontWeight="SemiBold" Foreground="#2B67C8" Margin="0,10,0,0"/></StackPanel>
-                    <Border Grid.Column="1" Width="44" Height="44" Background="#DEE9F9" CornerRadius="13"><TextBlock Text="✓" FontSize="18" FontWeight="Bold" Foreground="#2B67C8" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-                </Grid>
-            </Border>
-            <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#EFD2A6" Background="#FFF9F0" MinHeight="108">
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
-                    <StackPanel><TextBlock Text="نزدیک سررسید" Foreground="#825C2B" FontWeight="SemiBold"/><TextBlock x:Name="NearCard" Text="۰" FontSize="27" FontWeight="SemiBold" Foreground="#D37B13" Margin="0,10,0,0"/></StackPanel>
-                    <Border Grid.Column="1" Width="44" Height="44" Background="#FBE8CB" CornerRadius="13"><TextBlock Text="&#xE787;" FontFamily="Segoe MDL2 Assets" FontSize="17" Foreground="#D37B13" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-                </Grid>
-            </Border>
-            <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#EDB8C0" Background="#FFF5F6" MinHeight="108">
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
-                    <StackPanel><TextBlock Text="اشتراک معوق" Foreground="#824653" FontWeight="SemiBold"/><TextBlock x:Name="OverdueCard" Text="۰" FontSize="27" FontWeight="SemiBold" Foreground="#C73348" Margin="0,10,0,0"/></StackPanel>
-                    <Border Grid.Column="1" Width="44" Height="44" Background="#F8DDE2" CornerRadius="13"><TextBlock Text="!" FontSize="20" FontWeight="Bold" Foreground="#C73348" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-                </Grid>
-            </Border>
+            <Border Style="{StaticResource CardStyle}" BorderBrush="#A8D8CA" Background="#F4FBF8" MinHeight="108"><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="درآمد ماه جاری" Foreground="#3E7164" FontWeight="SemiBold"/><TextBlock x:Name="RevenueCard" Text="0 افغانی" FontSize="24" FontWeight="SemiBold" Foreground="#087E61" Margin="0,10,0,0"/></StackPanel><Border Grid.Column="1" Width="44" Height="44" Background="#D9F2EA" CornerRadius="13"><TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#087E61" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></Grid></Border>
+            <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#B9D1EE" Background="#F5F8FD" MinHeight="108"><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="اشتراک فعال" Foreground="#4D6281" FontWeight="SemiBold"/><TextBlock x:Name="ActiveCard" Text="0" FontSize="27" FontWeight="SemiBold" Foreground="#2B67C8" Margin="0,10,0,0"/></StackPanel><Border Grid.Column="1" Width="44" Height="44" Background="#DEE9F9" CornerRadius="13"><TextBlock Text="✓" FontSize="18" FontWeight="Bold" Foreground="#2B67C8" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></Grid></Border>
+            <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#EFD2A6" Background="#FFF9F0" MinHeight="108"><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="نزدیک سررسید" Foreground="#825C2B" FontWeight="SemiBold"/><TextBlock x:Name="NearCard" Text="0" FontSize="27" FontWeight="SemiBold" Foreground="#D37B13" Margin="0,10,0,0"/></StackPanel><Border Grid.Column="1" Width="44" Height="44" Background="#FBE8CB" CornerRadius="13"><TextBlock Text="&#xE787;" FontFamily="Segoe MDL2 Assets" FontSize="17" Foreground="#D37B13" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></Grid></Border>
+            <Border Style="{StaticResource CardStyle}" Margin="12,0,0,0" BorderBrush="#EDB8C0" Background="#FFF5F6" MinHeight="108"><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="اشتراک معوق" Foreground="#824653" FontWeight="SemiBold"/><TextBlock x:Name="OverdueCard" Text="0" FontSize="27" FontWeight="SemiBold" Foreground="#C73348" Margin="0,10,0,0"/></StackPanel><Border Grid.Column="1" Width="44" Height="44" Background="#F8DDE2" CornerRadius="13"><TextBlock Text="!" FontSize="20" FontWeight="Bold" Foreground="#C73348" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></Grid></Border>
         </UniformGrid>
 
-        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="15" Margin="0,0,0,12">
-            <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="190"/><ColumnDefinition Width="112"/></Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0"><TextBlock Text="جستجوی مرکز" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="SearchText" ToolTip="نام، کد یا موبایل مرکز" KeyDown="Search_KeyDown"/></StackPanel>
-                <StackPanel Grid.Column="1" Margin="12,0,0,0"><TextBlock Text="وضعیت اشتراک" Style="{StaticResource FieldLabelStyle}"/><ComboBox x:Name="StatusFilter" SelectionChanged="Filter_Changed"/></StackPanel>
-                <Button Grid.Column="2" Content="جستجو" Style="{StaticResource PrimaryButton}" Margin="12,20,0,0" Click="Search_Click"/>
-            </Grid>
-        </Border>
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="15" Margin="0,0,0,12"><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="190"/><ColumnDefinition Width="112"/></Grid.ColumnDefinitions><StackPanel Grid.Column="0"><TextBlock Text="جستجوی مرکز" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="SearchText" ToolTip="نام، کد یا موبایل مرکز" KeyDown="Search_KeyDown"/></StackPanel><StackPanel Grid.Column="1" Margin="12,0,0,0"><TextBlock Text="وضعیت اشتراک" Style="{StaticResource FieldLabelStyle}"/><ComboBox x:Name="StatusFilter" SelectionChanged="Filter_Changed"/></StackPanel><Button Grid.Column="2" Content="جستجو" Style="{StaticResource PrimaryButton}" Margin="12,20,0,0" Click="Search_Click"/></Grid></Border>
 
-        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="11" Margin="0,0,0,12">
-            <WrapPanel HorizontalAlignment="Right">
-                <Button Content="تنظیم اشتراک" Style="{StaticResource PrimaryButton}" MinWidth="135" Click="Configure_Click"/>
-                <Button Content="ثبت پرداخت" Style="{StaticResource SuccessButton}" MinWidth="125" Margin="8,0,0,0" Click="Payment_Click"/>
-                <Button Content="سوابق پرداخت" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Click="History_Click"/>
-                <Button Content="PDF مراکز معوق" Style="{StaticResource DangerButton}" Margin="8,0,0,0" Click="OverduePdf_Click"/>
-            </WrapPanel>
-        </Border>
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="11" Margin="0,0,0,12"><WrapPanel HorizontalAlignment="Right"><Button Content="تنظیم اشتراک" Style="{StaticResource PrimaryButton}" MinWidth="135" Click="Configure_Click"/><Button Content="ثبت پرداخت" Style="{StaticResource SuccessButton}" MinWidth="125" Margin="8,0,0,0" Click="Payment_Click"/><Button Content="سوابق / اصلاح پرداخت" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Click="History_Click"/><Button Content="PDF مراکز معوق" Style="{StaticResource DangerButton}" Margin="8,0,0,0" Click="OverduePdf_Click"/></WrapPanel></Border>
 
-        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="0" ClipToBounds="True">
-            <DataGrid x:Name="Grid" AlternationCount="2" MouseDoubleClick="Grid_DoubleClick">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="نام مرکز" Binding="{Binding Name}" Width="2*" MinWidth="170"/>
-                    <DataGridTextColumn Header="سکتور" Binding="{Binding Sector}" Width="*" MinWidth="120"/>
-                    <DataGridTextColumn Header="اشتراک ماهانه" Binding="{Binding SubscriptionText}" Width="150"/>
-                    <DataGridTextColumn Header="تاریخ آغاز" Binding="{Binding StartDate}" Width="115"/>
-                    <DataGridTextColumn Header="سررسید بعدی" Binding="{Binding DueDate}" Width="125"/>
-                    <DataGridTextColumn Header="وضعیت" Binding="{Binding SubscriptionStatus}" Width="130"/>
-                    <DataGridTextColumn Header="شماره موبایل" Binding="{Binding Phone}" Width="130"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
+        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="0" ClipToBounds="True"><DataGrid x:Name="Grid" AlternationCount="2" MouseDoubleClick="Grid_DoubleClick"><DataGrid.Columns><DataGridTextColumn Header="نام مرکز" Binding="{Binding Name}" Width="2*" MinWidth="170"/><DataGridTextColumn Header="سکتور" Binding="{Binding Sector}" Width="*" MinWidth="120"/><DataGridTextColumn Header="اشتراک ماهانه" Binding="{Binding SubscriptionText}" Width="150"/><DataGridTextColumn Header="آغاز (شمسی)" Binding="{Binding StartDateSolar}" Width="125"/><DataGridTextColumn Header="سررسید (شمسی)" Binding="{Binding DueDateSolar}" Width="130"/><DataGridTextColumn Header="وضعیت" Binding="{Binding SubscriptionStatus}" Width="130"/><DataGridTextColumn Header="شماره موبایل" Binding="{Binding Phone}" Width="130"/></DataGrid.Columns></DataGrid></Border>
     </Grid>
 </UserControl>

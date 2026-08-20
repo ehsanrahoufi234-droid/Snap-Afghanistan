@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using SnapAfghanistan.Native.Models;
@@ -15,12 +16,29 @@ namespace SnapAfghanistan.Native.Views
     {
         private readonly SnapRepository _repository;
         private readonly DashboardAnalyticsService _analytics;
+        private readonly Action<string>? _openSubscriptions;
 
-        public DashboardView(SnapRepository repository)
+        public DashboardView(SnapRepository repository, Action<string>? openSubscriptions = null)
         {
             InitializeComponent();
             _repository = repository;
             _analytics = new DashboardAnalyticsService();
+            _openSubscriptions = openSubscriptions;
+            MakeHealthIndicatorClickable(NearDueSmall, "نزدیک سررسید");
+            MakeHealthIndicatorClickable(OverdueSmall, "معوق");
+            MakeHealthIndicatorClickable(Suspended, "تعلیق");
+            MakeHealthIndicatorClickable(Overdue, "معوق");
+        }
+
+        private void MakeHealthIndicatorClickable(TextBlock target, string status)
+        {
+            FrameworkElement clickable = target;
+            var grid = target.Parent as Grid;
+            var card = grid?.Parent as Border;
+            if (card != null) clickable = card;
+            clickable.Cursor = Cursors.Hand;
+            clickable.ToolTip = "برای دیدن فهرست مراکز کلیک کنید";
+            clickable.MouseLeftButtonUp += (sender, args) => _openSubscriptions?.Invoke(status);
         }
 
         public void RefreshData()

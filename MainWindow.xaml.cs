@@ -20,7 +20,7 @@ namespace SnapAfghanistan.Native
             { "dashboard", new[] { "داشبورد مدیریتی", "تصویر روشن از اعضا، مراکز و سررسیدها" } },
             { "members", new[] { "مدیریت اعضا", "ثبت، ویرایش، تذکره و پرونده کامل اعضا" } },
             { "centers", new[] { "سکتورها و مراکز", "شبکه مراکز همکار، قراردادها و تخفیف‌ها" } },
-            { "subscriptions", new[] { "اشتراک ماهانه مراکز", "پرداخت‌ها، رسیدها، سررسیدها و بدهکاران" } },
+            { "subscriptions", new[] { "اشتراک ماهانه مراکز", "پرداخت‌ها، اصلاح رسیدها، سررسیدها و بدهکاران" } },
             { "reports", new[] { "گزارش‌ها و خروجی‌ها", "مشاهده و دریافت PDF یا CSV با لوگوی دفتر" } },
             { "notes", new[] { "یادداشت‌های دفتر", "پیگیری کارها، تماس‌ها و موعدهای مهم" } },
             { "settings", new[] { "تنظیمات و پشتیبان‌گیری", "امنیت، بکاپ، بازیابی و سطل زباله" } }
@@ -35,7 +35,7 @@ namespace SnapAfghanistan.Native
                 { "subscriptions", SubscriptionsButton }, { "reports", ReportsButton }, { "notes", NotesButton }, { "settings", SettingsButton }
             };
             SolarDate.Text = DateService.Solar(DateTime.Today);
-            GregorianDate.Text = DateService.Gregorian(DateTime.Today);
+            GregorianDate.Text = "میلادی: " + DateService.Gregorian(DateTime.Today);
             ShowPage("dashboard");
             Loaded += async (sender, args) => await RunAutomaticBackupAsync();
         }
@@ -68,8 +68,15 @@ namespace SnapAfghanistan.Native
                 case "reports": return new ReportsView(_repository, ShowToast);
                 case "notes": return new NotesView(_repository, ShowToast);
                 case "settings": return new SettingsView(_repository, ShowToast);
-                default: return new DashboardView(_repository);
+                default: return new DashboardView(_repository, OpenSubscriptions);
             }
+        }
+
+        private void OpenSubscriptions(string status)
+        {
+            ShowPage("subscriptions");
+            var view = _pages["subscriptions"] as SubscriptionsView;
+            view?.SetStatusFilter(status);
         }
 
         public void RefreshAllPages()

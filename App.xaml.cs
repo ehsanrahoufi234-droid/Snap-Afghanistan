@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using SnapAfghanistan.Native.Data;
+using SnapAfghanistan.Native.Models;
 using SnapAfghanistan.Native.Services;
 
 namespace SnapAfghanistan.Native
@@ -61,13 +62,80 @@ namespace SnapAfghanistan.Native
 
         private static void RunSelfTest()
         {
+            if (!string.Equals(Database.IntegrityCheck(), "ok", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Database integrity self-test failed.");
+
             var repository = new SnapRepository();
-            repository.GetDashboard();
-            var table = repository.BuildReport("members");
-            var pdf = Path.Combine(Path.GetTempPath(), "SnapAfghanistan-SelfTest.pdf");
-            new ReportService().ExportTablePdf(table, pdf, "آزمایش گزارش", "اسنپ افغانستان");
-            if (!File.Exists(pdf) || new FileInfo(pdf).Length == 0) throw new InvalidOperationException("PDF self-test failed.");
-            File.Delete(pdf);
+            var suffix = Guid.NewGuid().ToString("N").Substring(0, 10);
+
+            var sector = new SectorItem { Name = "آزمایش-" + suffix, Description = "self-test", Status = "فعال" };
+            repository.SaveSector(sector);
+
+            var member = new MemberRecord
+            {
+                Type = "معلم",
+                FirstName = "آزمایش",
+                FatherName = "سیستم",
+                TazkiraNo = "SELF-" + suffix,
+                Phone = "0700000000",
+                OriginalAddress = "هرات",
+                CurrentAddress = "هرات",
+                Institution = "Snap Self Test",
+                Status = "فعال"
+            };
+            repository.SaveMember(member, "");
+
+            var center = new CenterRecord
+            {
+                SectorId = sector.Id,
+                LegalName = "مرکز آزمایشی " + suffix,
+                TradeName = "Self Test",
+                Phone = "0700000000",
+                Address = "هرات",
+                FeeBasis = "اشتراک ماهانه",
+                Status = "فعال"
+            };
+            repository.SaveCenter(center);
+            repository.ConfigureSubscription(center.Id, 100m, DateTime.Today, DateTime.Today.AddMonths(1), false);
+            repository.RegisterPayment(center.Id, 100m, DateTime.Today, 1, "TEST-" + suffix, "native self-test");
+
+            var note = new NoteItem
+            {
+                Title = "آزمایش سیستم " + suffix,
+                Type = "عمومی",
+                Priority = "عادی",
+                Status = "باز",
+                Body = "Native self-test"
+            };
+            repository.SaveNote(note);
+
+            var dashboard = repository.GetDashboard();
+            if (dashboard.ActiveMembers < 1 || dashboard.RegisteredCenters < 1)
+                throw new InvalidOperationException("Repository CRUD self-test failed.");
+
+            var memberTable = repository.BuildReport("members");
+            var centerTable = repository.BuildReport("centers");
+            var paymentTable = repository.BuildReport("payments");
+            if (memberTable.Rows.Count < 1 || centerTable.Rows.Count < 1 || paymentTable.Rows.Count < 1)
+                throw new InvalidOperationException("Report data self-test failed.");
+
+            var pdf = Path.Combine(Path.GetTempPath(), "SnapAfghanistan-SelfTest-" + suffix + ".pdf");
+            var backup = Path.Combine(Path.GetTempPath(), "SnapAfghanistan-SelfTest-" + suffix + ".snapbackup");
+            try
+            {
+                new ReportService().ExportTablePdf(memberTable, pdf, "آزمایش گزارش", "اسنپ افغانستان");
+                if (!File.Exists(pdf) || new FileInfo(pdf).Length == 0)
+                    throw new InvalidOperationException("PDF self-test failed.");
+
+                new BackupService().CreateBackup(backup);
+                if (!File.Exists(backup) || new FileInfo(backup).Length == 0)
+                    throw new InvalidOperationException("Backup self-test failed.");
+            }
+            finally
+            {
+                try { if (File.Exists(pdf)) File.Delete(pdf); } catch { }
+                try { if (File.Exists(backup)) File.Delete(backup); } catch { }
+            }
         }
 
         private static void HandleUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

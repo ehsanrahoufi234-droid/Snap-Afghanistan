@@ -11,9 +11,9 @@
 - [x] Reports for members, centers, sectors, debtors and payments audited.
 - [x] SQLite uses foreign keys, WAL, busy timeout and schema version 4.
 - [x] Database quick integrity-check helper added.
-- [x] Backup now contains database + attachments + manifest + database SHA-256.
+- [x] Backup contains database + attachments + manifest + database SHA-256.
 - [x] Restore validates the backup, creates an emergency backup first and rolls back automatically on failure.
-- [x] ZIP restore blocks unsafe path traversal.
+- [x] ZIP restore blocks unsafe path traversal and enforces extracted-size limits.
 - [x] Self-test can use an isolated data root and exercises core CRUD, reports, PDF and backup.
 - [x] Windows CI uses isolated self-test data before packaging.
 - [x] Application, installer and artifact version bumped to 1.2.0.

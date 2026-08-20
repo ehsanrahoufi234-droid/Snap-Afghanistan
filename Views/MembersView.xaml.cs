@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using SnapAfghanistan.Native.Dialogs;
 using SnapAfghanistan.Native.Models;
@@ -16,28 +17,37 @@ namespace SnapAfghanistan.Native.Views
     public partial class MembersView : UserControl, IRefreshable
     {
         private readonly SnapRepository _repository;
+        private readonly OperationsService _operations = new OperationsService();
         private readonly Action<string> _toast;
         private int _page = 1;
         private const int PageSize = 200;
         private PagedResult<MemberListItem>? _current;
+        private MemberRecord? _previewRecord;
 
         public MembersView(SnapRepository repository, Action<string> toast)
         {
-            InitializeComponent(); _repository = repository; _toast = toast;
-            TypeFilter.ItemsSource = new[] { "همه" }.Concat(SnapRepository.MemberTypes).ToArray(); TypeFilter.SelectedIndex = 0;
-            StatusFilter.ItemsSource = new[] { "همه", "فعال", "غیرفعال", "بایگانی" }; StatusFilter.SelectedIndex = 0;
+            InitializeComponent();
+            _repository = repository;
+            _toast = toast;
+            TypeFilter.ItemsSource = new[] { "همه" }.Concat(SnapRepository.MemberTypes).ToArray();
+            TypeFilter.SelectedIndex = 0;
+            StatusFilter.ItemsSource = new[] { "فعال", "غیرفعال" };
+            StatusFilter.SelectedItem = "فعال";
         }
 
         public void RefreshData()
         {
             try
             {
-                _current = _repository.SearchMembers(SearchText.Text, Convert.ToString(TypeFilter.SelectedItem) ?? "همه", Convert.ToString(StatusFilter.SelectedItem) ?? "همه", _page, PageSize);
+                _current = _repository.SearchMembers(SearchText.Text, Convert.ToString(TypeFilter.SelectedItem) ?? "همه", Convert.ToString(StatusFilter.SelectedItem) ?? "فعال", _page, PageSize);
                 if (_page > _current.TotalPages) { _page = _current.TotalPages; RefreshData(); return; }
                 MembersGrid.ItemsSource = _current.Items;
                 CountText.Text = "تعداد نتیجه: " + _current.Total.ToString("N0", CultureInfo.InvariantCulture);
                 PageText.Text = "صفحه " + _current.Page.ToString(CultureInfo.InvariantCulture) + " از " + _current.TotalPages.ToString(CultureInfo.InvariantCulture);
-                PreviousButton.IsEnabled = _page > 1; NextButton.IsEnabled = _page < _current.TotalPages;
+                PreviousButton.IsEnabled = _page > 1;
+                NextButton.IsEnabled = _page < _current.TotalPages;
+                ArchivedMembersButton.Content = "بایگانی‌شده‌ها  " + _operations.CountArchived("عضو").ToString("N0", CultureInfo.InvariantCulture);
+                ClearPreview();
             }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطا", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
@@ -48,7 +58,71 @@ namespace SnapAfghanistan.Native.Views
         private void Filter_Changed(object sender, SelectionChangedEventArgs e) { if (IsLoaded) { _page = 1; RefreshData(); } }
         private void Previous_Click(object sender, RoutedEventArgs e) { if (_page > 1) { _page--; RefreshData(); } }
         private void Next_Click(object sender, RoutedEventArgs e) { if (_current != null && _page < _current.TotalPages) { _page++; RefreshData(); } }
-        private void Grid_DoubleClick(object sender, MouseButtonEventArgs e) { if (Selected() != null) EditSelected(); }
+        private void Grid_DoubleClick(object sender, MouseButtonEventArgs e) { if (Selected() != null) ViewSelected(); }
+
+        private void MembersGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selected = Selected();
+            if (selected == null) { ClearPreview(); return; }
+            _previewRecord = _repository.GetMember(selected.Id);
+            ShowPreview(_previewRecord);
+        }
+
+        private void ShowPreview(MemberRecord? record)
+        {
+            TazkiraPreview.Source = null;
+            if (record == null) { ClearPreview(); return; }
+            QuickName.Text = record.FirstName + " — " + record.Type;
+            QuickCode.Text = record.Code;
+            QuickDetails.Text = "نام پدر: " + record.FatherName + "\nشماره تذکره: " + record.TazkiraNo + "\nموبایل: " + (string.IsNullOrWhiteSpace(record.Phone) ? "—" : record.Phone) + "\nاداره / مکتب: " + (string.IsNullOrWhiteSpace(record.Institution) ? "—" : record.Institution) + "\nآدرس فعلی: " + record.CurrentAddress;
+            var exists = !string.IsNullOrWhiteSpace(record.AttachmentPath) && File.Exists(record.AttachmentPath);
+            OpenTazkiraButton.IsEnabled = exists;
+            SaveTazkiraButton.IsEnabled = exists;
+            if (!exists)
+            {
+                PreviewHint.Text = "برای این عضو فایل تذکره ثبت نشده است.";
+                PreviewHint.Visibility = Visibility.Visible;
+                return;
+            }
+            var extension = Path.GetExtension(record.AttachmentPath).ToLowerInvariant();
+            if (extension == ".jpg" || extension == ".jpeg" || extension == ".png")
+            {
+                try
+                {
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.UriSource = new Uri(record.AttachmentPath, UriKind.Absolute);
+                    image.EndInit();
+                    image.Freeze();
+                    TazkiraPreview.Source = image;
+                    PreviewHint.Visibility = Visibility.Collapsed;
+                }
+                catch
+                {
+                    PreviewHint.Text = "پیش‌نمایش تصویر ممکن نیست؛ از دکمه مشاهده اصل تذکره استفاده کنید.";
+                    PreviewHint.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                PreviewHint.Text = "فایل تذکره PDF است.\nبرای باز کردن، «مشاهده اصل تذکره» را بزنید.";
+                PreviewHint.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ClearPreview()
+        {
+            _previewRecord = null;
+            TazkiraPreview.Source = null;
+            PreviewHint.Text = "یک عضو را از فهرست انتخاب کنید.";
+            PreviewHint.Visibility = Visibility.Visible;
+            QuickName.Text = "—";
+            QuickCode.Text = "—";
+            QuickDetails.Text = "مشخصات کامل عضو بعد از انتخاب در این بخش دیده می‌شود.";
+            OpenTazkiraButton.IsEnabled = false;
+            SaveTazkiraButton.IsEnabled = false;
+        }
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
@@ -72,11 +146,28 @@ namespace SnapAfghanistan.Native.Views
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "ذخیره نشد", MessageBoxButton.OK, MessageBoxImage.Warning); }
         }
 
-        private void View_Click(object sender, RoutedEventArgs e)
+        private void View_Click(object sender, RoutedEventArgs e) => ViewSelected();
+        private void ViewSelected()
         {
             var selected = Selected(); if (selected == null) { _toast("ابتدا یک عضو را انتخاب کنید."); return; }
             var record = _repository.GetMember(selected.Id); if (record == null) return;
             new MemberDialog(record, true) { Owner = Window.GetWindow(this) }.ShowDialog();
+        }
+
+        private void OpenTazkira_Click(object sender, RoutedEventArgs e)
+        {
+            if (_previewRecord == null || !File.Exists(_previewRecord.AttachmentPath)) return;
+            Process.Start(new ProcessStartInfo(_previewRecord.AttachmentPath) { UseShellExecute = true });
+        }
+
+        private void SaveTazkira_Click(object sender, RoutedEventArgs e)
+        {
+            if (_previewRecord == null || !File.Exists(_previewRecord.AttachmentPath)) return;
+            var extension = Path.GetExtension(_previewRecord.AttachmentPath);
+            var dialog = new SaveFileDialog { Title = "ذخیره کاپی تذکره", FileName = "Tazkira-" + _previewRecord.Code + extension, Filter = "فایل تذکره|*" + extension + "|همه فایل‌ها|*.*" };
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
+            File.Copy(_previewRecord.AttachmentPath, dialog.FileName, true);
+            _toast("کاپی تذکره ذخیره شد.");
         }
 
         private void Pdf_Click(object sender, RoutedEventArgs e)
@@ -92,8 +183,15 @@ namespace SnapAfghanistan.Native.Views
         private void Archive_Click(object sender, RoutedEventArgs e)
         {
             var selected = Selected(); if (selected == null) { _toast("ابتدا یک عضو را انتخاب کنید."); return; }
-            if (MessageBox.Show("این عضو بایگانی شود؟", "تأیید بایگانی", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+            if (MessageBox.Show("عضو «" + selected.Name + "» بایگانی شود؟", "تأیید بایگانی", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
             _repository.ArchiveMember(selected.Id); RefreshData(); _toast("عضو بایگانی شد.");
+        }
+
+        private void Archived_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ArchiveDialog("عضو") { Owner = Window.GetWindow(this) };
+            dialog.ShowDialog();
+            if (dialog.Changed) RefreshData();
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)

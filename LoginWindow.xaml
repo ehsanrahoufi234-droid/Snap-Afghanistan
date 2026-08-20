@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ورود — اسنپ افغانستان"
-        MinWidth="960" MinHeight="640"
+        MinWidth="860" MinHeight="560"
         WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="CanResize"
         Icon="Assets/snap.ico" KeyDown="Window_KeyDown">
     <Grid FlowDirection="LeftToRight" Background="#F3F7FA">
@@ -140,7 +140,7 @@
                         </Border>
                     </Grid>
 
-                    <TextBlock Text="SNAP DESKTOP  •  VERSION 1.2 PREVIEW" Foreground="#8DB5C5" FontSize="10"
+                    <TextBlock Text="SNAP DESKTOP  •  VERSION 1.2" Foreground="#8DB5C5" FontSize="10"
                                FontWeight="Bold" FlowDirection="LeftToRight" Margin="0,34,0,0"/>
                 </StackPanel>
             </Grid>

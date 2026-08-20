@@ -48,7 +48,7 @@ ORDER BY month_key";
                 result.Add(new RevenueTrendPoint
                 {
                     MonthKey = key,
-                    Label = month.ToString("yyyy/MM", CultureInfo.InvariantCulture),
+                    Label = DateService.SolarMonth(month.AddDays(14)),
                     Amount = amount
                 });
             }

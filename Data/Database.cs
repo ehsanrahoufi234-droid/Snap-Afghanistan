@@ -10,15 +10,19 @@ namespace SnapAfghanistan.Native.Data
     {
         public const int CurrentSchemaVersion = 4;
 
-        public static readonly string RootDirectory = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SnapAfghanistan");
-
+        public static readonly string RootDirectory = ResolveRootDirectory();
         public static readonly string DataDirectory = System.IO.Path.Combine(RootDirectory, "Data");
         public static readonly string AttachmentsDirectory = System.IO.Path.Combine(DataDirectory, "attachments");
         public static readonly string BackupsDirectory = System.IO.Path.Combine(DataDirectory, "backups");
         public static readonly string LogDirectory = System.IO.Path.Combine(RootDirectory, "Logs");
         public static readonly string PathName = System.IO.Path.Combine(DataDirectory, "snap.db");
+
+        private static string ResolveRootDirectory()
+        {
+            var overridePath = Environment.GetEnvironmentVariable("SNAP_DATA_ROOT");
+            if (!string.IsNullOrWhiteSpace(overridePath)) return System.IO.Path.GetFullPath(overridePath.Trim());
+            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SnapAfghanistan");
+        }
 
         public static SQLiteConnection Open()
         {

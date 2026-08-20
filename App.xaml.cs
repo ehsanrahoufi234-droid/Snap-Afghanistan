@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -118,6 +119,12 @@ namespace SnapAfghanistan.Native
             var paymentTable = repository.BuildReport("payments");
             if (memberTable.Rows.Count < 1 || centerTable.Rows.Count < 1 || paymentTable.Rows.Count < 1)
                 throw new InvalidOperationException("Report data self-test failed.");
+
+            repository.DeleteMember(member.Id);
+            var trashMember = repository.GetTrash().FirstOrDefault(item => item.EntityType == "عضو" && item.EntityId == member.Id);
+            if (trashMember == null) throw new InvalidOperationException("Trash self-test failed.");
+            repository.RestoreTrash(trashMember);
+            if (repository.GetMember(member.Id) == null) throw new InvalidOperationException("Trash restore self-test failed.");
 
             var pdf = Path.Combine(Path.GetTempPath(), "SnapAfghanistan-SelfTest-" + suffix + ".pdf");
             var backup = Path.Combine(Path.GetTempPath(), "SnapAfghanistan-SelfTest-" + suffix + ".snapbackup");

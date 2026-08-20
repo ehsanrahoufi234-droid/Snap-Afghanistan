@@ -31,7 +31,7 @@ namespace SnapAfghanistan.Native.Views
             {
                 var sector = Convert.ToString(SectorFilter.SelectedValue) ?? "همه"; _current = _repository.SearchCenters(SearchText.Text, sector, Convert.ToString(StatusFilter.SelectedItem) ?? "همه", _page, PageSize);
                 if (_page > _current.TotalPages) { _page = _current.TotalPages; RefreshData(); return; }
-                CentersGrid.ItemsSource = _current.Items; CountText.Text = "تعداد مرکز: " + _current.Total.ToString("N0", CultureInfo.InvariantCulture); PageText.Text = "صفحه " + _current.Page + " از " + _current.TotalPages;
+                CentersGrid.ItemsSource = _current.Items; CountText.Text = "تعداد مرکز: " + _current.Total.ToString("N0", CultureInfo.InvariantCulture); PageText.Text = "صفحه " + _current.Page.ToString(CultureInfo.InvariantCulture) + " از " + _current.TotalPages.ToString(CultureInfo.InvariantCulture);
                 PreviousButton.IsEnabled = _page > 1; NextButton.IsEnabled = _page < _current.TotalPages;
             }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطا", MessageBoxButton.OK, MessageBoxImage.Error); }

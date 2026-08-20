@@ -842,11 +842,11 @@ VALUES(@id,@member,'تذکره',@original,@stored,@mime,@size,@hash)";
 
         private static string SubscriptionStatusSql(int reminderDays)
         {
-            return @"CASE
+            return $@"CASE
 WHEN COALESCE(p.subscription_suspended,0)=1 THEN 'تعلیق'
 WHEN COALESCE(p.monthly_subscription,0)<=0 OR COALESCE(p.next_due_date,'')='' THEN 'تنظیم نشده'
 WHEN date(p.next_due_date)<date('now') THEN 'معوق'
-WHEN date(p.next_due_date)<=date('now','+" + reminderDays.ToString(CultureInfo.InvariantCulture) + " day') THEN 'نزدیک سررسید'
+WHEN date(p.next_due_date)<=date('now','+{reminderDays.ToString(CultureInfo.InvariantCulture)} day') THEN 'نزدیک سررسید'
 ELSE 'فعال' END";
         }
 

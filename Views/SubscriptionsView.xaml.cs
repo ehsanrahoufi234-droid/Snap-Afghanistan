@@ -20,8 +20,8 @@ namespace SnapAfghanistan.Native.Views
             try
             {
                 var status = Convert.ToString(StatusFilter.SelectedItem) ?? "همه"; var data = _repository.SearchCenters(SearchText.Text, "همه", status, 1, 500); Grid.ItemsSource = data.Items;
-                var stats = _repository.GetDashboard(); RevenueCard.Text = stats.MonthRevenue.ToString("N0", CultureInfo.InvariantCulture) + " افغانی"; NearCard.Text = stats.NearDue.ToString("N0"); OverdueCard.Text = stats.Overdue.ToString("N0");
-                ActiveCard.Text = _repository.SearchCenters("", "همه", "فعال", 1, 25).Total.ToString("N0");
+                var stats = _repository.GetDashboard(); RevenueCard.Text = stats.MonthRevenue.ToString("N0", CultureInfo.InvariantCulture) + " افغانی"; NearCard.Text = stats.NearDue.ToString("N0", CultureInfo.InvariantCulture); OverdueCard.Text = stats.Overdue.ToString("N0", CultureInfo.InvariantCulture);
+                ActiveCard.Text = _repository.SearchCenters("", "همه", "فعال", 1, 25).Total.ToString("N0", CultureInfo.InvariantCulture);
             }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطا", MessageBoxButton.OK, MessageBoxImage.Error); }
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using SnapAfghanistan.Native.Services;
 
 namespace SnapAfghanistan.Native.Models
 {
@@ -21,8 +22,12 @@ namespace SnapAfghanistan.Native.Models
         public long NearDue { get; set; }
         public long Overdue { get; set; }
         public long Suspended { get; set; }
+        public long ArchivedMembers { get; set; }
+        public long ArchivedCenters { get; set; }
+        public long ArchivedSectors { get; set; }
         public long MonthRevenue { get; set; }
         public Dictionary<string, long> MemberTypes { get; set; } = new Dictionary<string, long>();
+        public long ArchivedTotal => ArchivedMembers + ArchivedCenters + ArchivedSectors;
     }
 
     public sealed class RevenueTrendPoint
@@ -46,6 +51,7 @@ namespace SnapAfghanistan.Native.Models
         public string Institution { get; set; } = "";
         public string Status { get; set; } = "";
         public string CreatedAt { get; set; } = "";
+        public string CreatedAtSolar => DateService.SolarFromIso(CreatedAt.Length >= 10 ? CreatedAt.Substring(0, 10) : CreatedAt);
     }
 
     public sealed class MemberRecord
@@ -91,6 +97,8 @@ namespace SnapAfghanistan.Native.Models
         public string SubscriptionText => MonthlySubscription <= 0 ? "تنظیم نشده" : MonthlySubscription.ToString("N0", CultureInfo.InvariantCulture) + " افغانی";
         public string StartDate { get; set; } = "";
         public string DueDate { get; set; } = "";
+        public string StartDateSolar => DateService.SolarFromIso(StartDate);
+        public string DueDateSolar => DateService.SolarFromIso(DueDate);
         public string SubscriptionStatus { get; set; } = "تنظیم نشده";
         public string Status { get; set; } = "فعال";
     }
@@ -125,11 +133,14 @@ namespace SnapAfghanistan.Native.Models
         public string CenterId { get; set; } = "";
         public string CenterName { get; set; } = "";
         public string PaymentDate { get; set; } = "";
+        public string PaymentDateSolar => DateService.SolarFromIso(PaymentDate);
         public decimal Amount { get; set; }
         public string AmountText => Amount.ToString("N0", CultureInfo.InvariantCulture) + " افغانی";
         public string ReceiptNo { get; set; } = "";
         public int CoveredMonths { get; set; }
+        public string PreviousDueDate { get; set; } = "";
         public string NewDueDate { get; set; } = "";
+        public string NewDueDateSolar => DateService.SolarFromIso(NewDueDate);
         public string Notes { get; set; } = "";
     }
 
@@ -141,9 +152,20 @@ namespace SnapAfghanistan.Native.Models
         public string RelatedName { get; set; } = "";
         public string Priority { get; set; } = "عادی";
         public string DueDate { get; set; } = "";
+        public string DueDateSolar => DateService.SolarFromIso(DueDate);
         public string Status { get; set; } = "باز";
         public string Body { get; set; } = "";
         public string UpdatedAt { get; set; } = "";
+    }
+
+    public sealed class ArchivedItem
+    {
+        public string EntityType { get; set; } = "";
+        public string EntityId { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string Detail { get; set; } = "";
+        public string ArchivedAt { get; set; } = "";
+        public string ArchivedAtSolar => DateService.SolarFromIso(ArchivedAt.Length >= 10 ? ArchivedAt.Substring(0, 10) : ArchivedAt);
     }
 
     public sealed class TrashItem

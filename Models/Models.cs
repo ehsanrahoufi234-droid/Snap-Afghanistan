@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace SnapAfghanistan.Native.Models
 {
@@ -78,7 +79,7 @@ namespace SnapAfghanistan.Native.Models
         public string Phone { get; set; } = "";
         public string Discount { get; set; } = "";
         public long MonthlySubscription { get; set; }
-        public string SubscriptionText => MonthlySubscription <= 0 ? "تنظیم نشده" : MonthlySubscription.ToString("N0") + " افغانی";
+        public string SubscriptionText => MonthlySubscription <= 0 ? "تنظیم نشده" : MonthlySubscription.ToString("N0", CultureInfo.InvariantCulture) + " افغانی";
         public string StartDate { get; set; } = "";
         public string DueDate { get; set; } = "";
         public string SubscriptionStatus { get; set; } = "تنظیم نشده";
@@ -116,7 +117,7 @@ namespace SnapAfghanistan.Native.Models
         public string CenterName { get; set; } = "";
         public string PaymentDate { get; set; } = "";
         public decimal Amount { get; set; }
-        public string AmountText => Amount.ToString("N0") + " افغانی";
+        public string AmountText => Amount.ToString("N0", CultureInfo.InvariantCulture) + " افغانی";
         public string ReceiptNo { get; set; } = "";
         public int CoveredMonths { get; set; }
         public string NewDueDate { get; set; } = "";

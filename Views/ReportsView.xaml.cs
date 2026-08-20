@@ -62,29 +62,12 @@ namespace SnapAfghanistan.Native.Views
                 Mouse.OverrideCursor = Cursors.Wait;
                 var choice = (ReportChoice)ReportType.SelectedItem;
                 _table = _repository.BuildReport(choice.Key, Convert.ToString(MemberType.SelectedItem) ?? "همه");
-                NormalizeDates(_table);
+                DateService.NormalizeReportDates(_table);
                 Grid.ItemsSource = _table.DefaultView;
                 CountText.Text = "تعداد ردیف: " + _table.Rows.Count.ToString("N0", CultureInfo.InvariantCulture);
             }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "گزارش ساخته نشد", MessageBoxButton.OK, MessageBoxImage.Error); }
             finally { Mouse.OverrideCursor = null; }
-        }
-
-        private static void NormalizeDates(DataTable table)
-        {
-            foreach (DataColumn column in table.Columns)
-            {
-                var dateColumn = column.ColumnName.Contains("تاریخ") || column.ColumnName.Contains("سررسید") || column.ColumnName.Contains("موعد");
-                if (!dateColumn) continue;
-                foreach (DataRow row in table.Rows)
-                {
-                    var raw = Convert.ToString(row[column], CultureInfo.InvariantCulture) ?? "";
-                    if (raw.Length < 10) continue;
-                    var iso = raw.Substring(0, 10);
-                    var solar = DateService.SolarFromIso(iso);
-                    if (!string.IsNullOrWhiteSpace(solar)) row[column] = solar;
-                }
-            }
         }
 
         private void Pdf_Click(object sender, RoutedEventArgs e)

@@ -5,8 +5,7 @@
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
 
         <Border Style="{StaticResource CardStyle}" Padding="16" Margin="0,0,0,12">
-            <Grid>
-                <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="165"/><ColumnDefinition Width="150"/><ColumnDefinition Width="112"/></Grid.ColumnDefinitions>
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="165"/><ColumnDefinition Width="150"/><ColumnDefinition Width="112"/></Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0"><TextBlock Text="جستجوی اعضا" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="SearchText" ToolTip="کد، نام، تذکره، موبایل یا اداره" KeyDown="Search_KeyDown"/></StackPanel>
                 <StackPanel Grid.Column="1" Margin="12,0,0,0"><TextBlock Text="گروه عضو" Style="{StaticResource FieldLabelStyle}"/><ComboBox x:Name="TypeFilter" SelectionChanged="Filter_Changed"/></StackPanel>
                 <StackPanel Grid.Column="2" Margin="12,0,0,0"><TextBlock Text="وضعیت" Style="{StaticResource FieldLabelStyle}"/><ComboBox x:Name="StatusFilter" SelectionChanged="Filter_Changed"/></StackPanel>
@@ -21,34 +20,45 @@
                 <Button Content="مشاهده پرونده" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Click="View_Click"/>
                 <Button Content="PDF انفرادی" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="Pdf_Click"/>
                 <Button Content="بایگانی" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="Archive_Click"/>
+                <Button x:Name="ArchivedMembersButton" Content="بایگانی‌شده‌ها" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="Archived_Click"/>
                 <Button Content="حذف" Style="{StaticResource DangerButton}" Margin="8,0,0,0" Click="Delete_Click"/>
             </WrapPanel>
         </Border>
 
-        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="0" ClipToBounds="True">
-            <DataGrid x:Name="MembersGrid" AlternationCount="2" MouseDoubleClick="Grid_DoubleClick">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="کد عضویت" Binding="{Binding Code}" Width="145"/>
-                    <DataGridTextColumn Header="نام عضو" Binding="{Binding Name}" Width="*" MinWidth="135"/>
-                    <DataGridTextColumn Header="نام پدر" Binding="{Binding FatherName}" Width="*" MinWidth="125"/>
-                    <DataGridTextColumn Header="گروه" Binding="{Binding Type}" Width="115"/>
-                    <DataGridTextColumn Header="شماره تذکره" Binding="{Binding Tazkira}" Width="135"/>
-                    <DataGridTextColumn Header="شماره موبایل" Binding="{Binding Phone}" Width="125"/>
-                    <DataGridTextColumn Header="اداره / مکتب" Binding="{Binding Institution}" Width="*" MinWidth="150"/>
-                    <DataGridTextColumn Header="وضعیت" Binding="{Binding Status}" Width="95"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="14"/><ColumnDefinition Width="285"/></Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="0" ClipToBounds="True">
+                <DataGrid x:Name="MembersGrid" AlternationCount="2" MouseDoubleClick="Grid_DoubleClick" SelectionChanged="MembersGrid_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="کد عضویت" Binding="{Binding Code}" Width="145"/>
+                        <DataGridTextColumn Header="نام عضو" Binding="{Binding Name}" Width="*" MinWidth="135"/>
+                        <DataGridTextColumn Header="نام پدر" Binding="{Binding FatherName}" Width="*" MinWidth="120"/>
+                        <DataGridTextColumn Header="گروه" Binding="{Binding Type}" Width="110"/>
+                        <DataGridTextColumn Header="شماره تذکره" Binding="{Binding Tazkira}" Width="135"/>
+                        <DataGridTextColumn Header="موبایل" Binding="{Binding Phone}" Width="120"/>
+                        <DataGridTextColumn Header="وضعیت" Binding="{Binding Status}" Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+                    <TextBlock Text="نمای سریع عضو" Style="{StaticResource SectionTitleStyle}"/>
+                    <TextBlock Text="با انتخاب هر ردیف، مشخصات و تذکره همین‌جا دیده می‌شود." Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" Margin="0,5,0,14"/>
+                    <Border Height="170" Background="#F3F7FA" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="12" ClipToBounds="True">
+                        <Grid><Image x:Name="TazkiraPreview" Stretch="Uniform" Margin="6"/><TextBlock x:Name="PreviewHint" Text="تذکره‌ای انتخاب نشده" Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="12"/></Grid>
+                    </Border>
+                    <TextBlock x:Name="QuickName" Text="—" FontSize="18" FontWeight="SemiBold" Margin="0,14,0,0"/>
+                    <TextBlock x:Name="QuickCode" Text="—" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                    <TextBlock x:Name="QuickDetails" Text="یک عضو را انتخاب کنید." Foreground="{StaticResource MutedBrush}" FontSize="11" LineHeight="20" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                    <Button x:Name="OpenTazkiraButton" Content="مشاهده اصل تذکره" Style="{StaticResource SecondaryButton}" Margin="0,15,0,0" Click="OpenTazkira_Click" IsEnabled="False"/>
+                    <Button x:Name="SaveTazkiraButton" Content="ذخیره یک کاپی از تذکره" Style="{StaticResource GhostButton}" Margin="0,8,0,0" Click="SaveTazkira_Click" IsEnabled="False"/>
+                </StackPanel></ScrollViewer>
+            </Border>
+        </Grid>
 
         <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="12,9" Margin="0,12,0,0">
-            <Grid FlowDirection="LeftToRight">
-                <TextBlock x:Name="CountText" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" FlowDirection="RightToLeft"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="RightToLeft">
-                    <Button x:Name="PreviousButton" Content="صفحه قبلی" Style="{StaticResource GhostButton}" Width="105" Click="Previous_Click"/>
-                    <TextBlock x:Name="PageText" VerticalAlignment="Center" FontWeight="SemiBold" Margin="14,0"/>
-                    <Button x:Name="NextButton" Content="صفحه بعدی" Style="{StaticResource GhostButton}" Width="105" Click="Next_Click"/>
-                </StackPanel>
-            </Grid>
+            <Grid FlowDirection="LeftToRight"><TextBlock x:Name="CountText" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" FlowDirection="RightToLeft"/><StackPanel Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="RightToLeft"><Button x:Name="PreviousButton" Content="صفحه قبلی" Style="{StaticResource GhostButton}" Width="105" Click="Previous_Click"/><TextBlock x:Name="PageText" VerticalAlignment="Center" FontWeight="SemiBold" Margin="14,0"/><Button x:Name="NextButton" Content="صفحه بعدی" Style="{StaticResource GhostButton}" Width="105" Click="Next_Click"/></StackPanel></Grid>
         </Border>
     </Grid>
 </UserControl>

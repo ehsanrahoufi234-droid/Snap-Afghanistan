@@ -23,6 +23,19 @@ namespace SnapAfghanistan.Native.Views
         }
         public void RefreshData() { if (_table == null) Preview(); }
         private void ReportType_Changed(object sender, SelectionChangedEventArgs e) { if (MemberType != null) MemberType.IsEnabled = ((ReportChoice)ReportType.SelectedItem).Key == "members"; }
+        private void Grid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            e.Column.MinWidth = 125;
+            e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.SizeToCells);
+            if (e.Column is DataGridTextColumn textColumn)
+            {
+                var cellStyle = new Style(typeof(TextBlock));
+                cellStyle.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
+                cellStyle.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+                cellStyle.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
+                textColumn.ElementStyle = cellStyle;
+            }
+        }
         private void Preview_Click(object sender, RoutedEventArgs e) => Preview();
         private void Preview()
         {

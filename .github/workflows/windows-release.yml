@@ -1,0 +1,67 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Configure MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore packages
+        run: msbuild SnapAfghanistan.Native.csproj /t:Restore /p:RestoreIgnoreFailedSources=true
+
+      - name: Build desktop application
+        run: msbuild SnapAfghanistan.Native.csproj /p:Configuration=Release /p:Platform=x64 /m
+
+      - name: Prepare installer payload
+        shell: pwsh
+        run: |
+          $app = Get-ChildItem -Path . -Recurse -Filter SnapAfghanistan.exe |
+            Where-Object { $_.FullName -match '\\bin\\.*Release' } |
+            Select-Object -First 1
+          if (-not $app) { throw 'SnapAfghanistan.exe was not produced.' }
+          New-Item -ItemType Directory -Force -Path publish | Out-Null
+          Copy-Item -Path (Join-Path $app.DirectoryName '*') -Destination publish -Recurse -Force
+
+      - name: Native smoke test
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath .\publish\SnapAfghanistan.exe -ArgumentList '--self-test' -PassThru -Wait
+          if ($process.ExitCode -ne 0) { throw "Self-test failed with exit code $($process.ExitCode)." }
+
+      - name: Install Inno Setup compiler
+        run: choco install innosetup -y --no-progress
+
+      - name: Build Setup.exe
+        run: iscc Installer.iss
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SnapAfghanistan-Windows-Setup
+          path: installer-output/SnapAfghanistan-Setup-1.0.0.exe
+          if-no-files-found: error
+
+      - name: Publish preview release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0-preview
+          name: Snap Afghanistan 1.0.0 Preview
+          prerelease: true
+          make_latest: false
+          files: installer-output/SnapAfghanistan-Setup-1.0.0.exe
+          body: |
+            نسخه آزمایشی نصبی ویندوز — بدون مرورگر و بدون سرور محلی.
+            داده‌ها در LocalAppData نگهداری می‌شوند و با آپدیت حذف نمی‌شوند.

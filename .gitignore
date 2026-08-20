@@ -1,0 +1,11 @@
+bin/
+obj/
+publish/
+installer-output/
+.vs/
+*.user
+*.suo
+*.snapbackup
+*.db
+*.db-wal
+*.db-shm

@@ -1,0 +1,50 @@
+<Window x:Class="SnapAfghanistan.Native.Dialogs.MemberDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="پرونده عضو" Width="880" Height="720" MinWidth="760" MinHeight="620"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="../Assets/snap.ico">
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions><RowDefinition Height="82"/><RowDefinition/><RowDefinition Height="76"/></Grid.RowDefinitions>
+        <Border Background="{StaticResource NavyBrush}" Padding="28,16">
+            <StackPanel><TextBlock x:Name="HeaderTitle" Text="ثبت عضو جدید" Foreground="White" FontSize="23" FontWeight="Bold"/><TextBlock Text="مشخصات هویتی و اطلاعات تماس عضو" Foreground="#B6C9D6" FontSize="11" Margin="0,5,0,0"/></StackPanel>
+        </Border>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Border Style="{StaticResource CardStyle}" Margin="20" Padding="24">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="2"><TextBlock Text="کد عضویت" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="CodeText" IsReadOnly="True" Text="پس از ذخیره ساخته می‌شود"/></StackPanel>
+                        <StackPanel Grid.Column="0"><TextBlock Text="نوع عضو *" Style="{StaticResource FieldLabelStyle}"/><ComboBox x:Name="TypeCombo"/></StackPanel>
+                    </Grid>
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="2"><TextBlock Text="نام *" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="NameText"/></StackPanel>
+                        <StackPanel Grid.Column="0"><TextBlock Text="نام پدر *" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="FatherText"/></StackPanel>
+                    </Grid>
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="2"><TextBlock Text="شماره تذکره *" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="TazkiraText" FlowDirection="LeftToRight" TextAlignment="Left"/></StackPanel>
+                        <StackPanel Grid.Column="0"><TextBlock Text="شماره موبایل" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="PhoneText" FlowDirection="LeftToRight" TextAlignment="Left"/></StackPanel>
+                    </Grid>
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="2"><TextBlock Text="آدرس اصلی *" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="OriginalAddressText"/></StackPanel>
+                        <StackPanel Grid.Column="0"><TextBlock Text="آدرس فعلی *" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="CurrentAddressText"/></StackPanel>
+                    </Grid>
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="2"><TextBlock Text="اداره، پوهنتون یا مکتب" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="InstitutionText"/></StackPanel>
+                        <StackPanel Grid.Column="0"><TextBlock Text="وضعیت" Style="{StaticResource FieldLabelStyle}"/><ComboBox x:Name="StatusCombo"/></StackPanel>
+                    </Grid>
+                    <TextBlock Text="فایل تذکره (JPG، PNG یا PDF — حداکثر ۱۲ مگابایت)" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/>
+                    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="AttachmentText" Grid.Column="0" IsReadOnly="True"/><Button x:Name="ChooseAttachmentButton" Grid.Column="1" Content="انتخاب فایل" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Click="ChooseAttachment_Click"/><Button x:Name="OpenAttachmentButton" Grid.Column="2" Content="مشاهده" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="OpenAttachment_Click"/></Grid>
+                    <TextBlock Text="توضیحات" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><TextBox x:Name="NotesText" Height="82" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"/>
+                    <TextBlock x:Name="ErrorText" Foreground="{StaticResource RedBrush}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,14,0,0"/>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+        <Border Grid.Row="2" Background="White" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"><Button Content="انصراف" Style="{StaticResource GhostButton}" Width="115" IsCancel="True"/><Button x:Name="SaveButton" Content="ذخیره پرونده" Style="{StaticResource PrimaryButton}" Width="150" Margin="10,0,0,0" Click="Save_Click"/></StackPanel>
+        </Border>
+    </Grid>
+</Window>

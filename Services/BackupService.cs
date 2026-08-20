@@ -10,6 +10,9 @@ namespace SnapAfghanistan.Native.Services
 {
     public sealed class BackupService
     {
+        private const long MaxBackupEntryBytes = 256L * 1024L * 1024L;
+        private const long MaxBackupExtractedBytes = 1024L * 1024L * 1024L;
+
         public string CreateBackup(string destinationPath)
         {
             if (string.IsNullOrWhiteSpace(destinationPath)) throw new InvalidOperationException("مسیر بکاپ انتخاب نشده است.");
@@ -38,9 +41,16 @@ namespace SnapAfghanistan.Native.Services
                 if (!string.IsNullOrWhiteSpace(parent)) Directory.CreateDirectory(parent);
                 var partial = destinationPath + ".partial";
                 if (File.Exists(partial)) File.Delete(partial);
-                ZipFile.CreateFromDirectory(temporary, partial, CompressionLevel.Optimal, false);
-                if (File.Exists(destinationPath)) File.Delete(destinationPath);
-                File.Move(partial, destinationPath);
+                try
+                {
+                    ZipFile.CreateFromDirectory(temporary, partial, CompressionLevel.Optimal, false);
+                    if (File.Exists(destinationPath)) File.Delete(destinationPath);
+                    File.Move(partial, destinationPath);
+                }
+                finally
+                {
+                    try { if (File.Exists(partial)) File.Delete(partial); } catch { }
+                }
                 return destinationPath;
             }
             finally
@@ -155,8 +165,13 @@ namespace SnapAfghanistan.Native.Services
             using (var archive = ZipFile.OpenRead(sourcePath))
             {
                 var root = Path.GetFullPath(destination + Path.DirectorySeparatorChar);
+                long total = 0;
                 foreach (var entry in archive.Entries)
                 {
+                    if (entry.Length > MaxBackupEntryBytes) throw new InvalidOperationException("یکی از فایل‌های بکاپ بیش از حد بزرگ است.");
+                    checked { total += entry.Length; }
+                    if (total > MaxBackupExtractedBytes) throw new InvalidOperationException("حجم بازشده بکاپ بیش از حد مجاز است.");
+
                     var target = Path.GetFullPath(Path.Combine(destination, entry.FullName));
                     if (!target.StartsWith(root, StringComparison.OrdinalIgnoreCase))
                         throw new InvalidOperationException("ساختار فایل بکاپ ناامن است.");

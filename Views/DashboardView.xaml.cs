@@ -32,9 +32,13 @@ namespace SnapAfghanistan.Native.Views
 
         private void MakeHealthIndicatorClickable(TextBlock target, string status)
         {
-            target.Cursor = Cursors.Hand;
-            target.ToolTip = "برای دیدن فهرست مراکز کلیک کنید";
-            target.MouseLeftButtonUp += (sender, args) => _openSubscriptions?.Invoke(status);
+            UIElement clickable = target;
+            var grid = target.Parent as Grid;
+            var card = grid?.Parent as Border;
+            if (card != null) clickable = card;
+            clickable.Cursor = Cursors.Hand;
+            clickable.ToolTip = "برای دیدن فهرست مراکز کلیک کنید";
+            clickable.MouseLeftButtonUp += (sender, args) => _openSubscriptions?.Invoke(status);
         }
 
         public void RefreshData()

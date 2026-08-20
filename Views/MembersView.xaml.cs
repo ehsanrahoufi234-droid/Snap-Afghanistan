@@ -36,7 +36,7 @@ namespace SnapAfghanistan.Native.Views
                 if (_page > _current.TotalPages) { _page = _current.TotalPages; RefreshData(); return; }
                 MembersGrid.ItemsSource = _current.Items;
                 CountText.Text = "تعداد نتیجه: " + _current.Total.ToString("N0", CultureInfo.InvariantCulture);
-                PageText.Text = "صفحه " + _current.Page + " از " + _current.TotalPages;
+                PageText.Text = "صفحه " + _current.Page.ToString(CultureInfo.InvariantCulture) + " از " + _current.TotalPages.ToString(CultureInfo.InvariantCulture);
                 PreviousButton.IsEnabled = _page > 1; NextButton.IsEnabled = _page < _current.TotalPages;
             }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطا", MessageBoxButton.OK, MessageBoxImage.Error); }

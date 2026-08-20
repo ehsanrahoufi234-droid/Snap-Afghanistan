@@ -18,8 +18,8 @@ namespace SnapAfghanistan.Native
             Username.Text = _firstRun ? "admin" : _auth.Username;
             if (_firstRun)
             {
-                ModeText.Text = "برای نخستین ورود، رمز مدیر را بسازید";
-                LoginButton.Content = "ایجاد رمز و ورود";
+                ModeText.Text = "برای نخستین ورود، حساب مدیر اصلی را بسازید";
+                LoginButton.Content = "ایجاد حساب مدیر و ورود";
             }
             Loaded += (sender, args) => Password.Focus();
         }
@@ -41,12 +41,18 @@ namespace SnapAfghanistan.Native
                     if (Password.Password != ConfirmPassword.Password) throw new InvalidOperationException("تکرار رمز با رمز اصلی یکسان نیست.");
                     _auth.SetPassword(Password.Password, Username.Text);
                 }
-                else if (!_auth.Verify(Username.Text, Password.Password))
-                    throw new InvalidOperationException("نام کاربری یا رمز عبور نادرست است.");
+
+                var session = _auth.Authenticate(Username.Text, Password.Password);
+                if (session.User.MustChangePassword)
+                {
+                    MessageBox.Show("این حساب با رمز موقت وارد شده است. برای امنیت، رمز را از بخش تنظیمات تغییر دهید.",
+                        "رمز موقت", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
                 DialogResult = true;
             }
             catch (Exception exception)
             {
+                SessionContext.End();
                 ErrorText.Text = exception.Message;
                 Password.SelectAll();
                 Password.Focus();

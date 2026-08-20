@@ -40,8 +40,14 @@ jobs:
       - name: Native smoke test
         shell: pwsh
         run: |
+          $selfTestRoot = Join-Path $env:RUNNER_TEMP 'SnapAfghanistan-SelfTestData'
+          if (Test-Path $selfTestRoot) { Remove-Item $selfTestRoot -Recurse -Force }
+          New-Item -ItemType Directory -Force -Path $selfTestRoot | Out-Null
+          $env:SNAP_DATA_ROOT = $selfTestRoot
           $process = Start-Process -FilePath .\publish\SnapAfghanistan.exe -ArgumentList '--self-test' -PassThru -Wait
           if ($process.ExitCode -ne 0) { throw "Self-test failed with exit code $($process.ExitCode)." }
+          $db = Join-Path $selfTestRoot 'Data\snap.db'
+          if (-not (Test-Path $db)) { throw 'Self-test database was not created.' }
 
       - name: Install Inno Setup compiler
         run: choco install innosetup -y --no-progress
@@ -52,19 +58,20 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SnapAfghanistan-Windows-Setup
-          path: installer-output/SnapAfghanistan-Setup-1.1.0.exe
+          name: SnapAfghanistan-Windows-Setup-1.2.0
+          path: installer-output/SnapAfghanistan-Setup-1.2.0.exe
           if-no-files-found: error
 
       - name: Publish preview release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1.0-preview
-          name: Snap Afghanistan 1.1.0 Preview
+          tag_name: v1.2.0-preview
+          name: Snap Afghanistan 1.2.0 Preview
           prerelease: true
           make_latest: false
-          files: installer-output/SnapAfghanistan-Setup-1.1.0.exe
+          files: installer-output/SnapAfghanistan-Setup-1.2.0.exe
           body: |
-            نسخه ۱.۱ با طراحی جدید، رابط راست‌به‌چپ منظم و اجرای بومی ویندوز.
-            داده‌ها در LocalAppData نگهداری می‌شوند و با آپدیت حذف نمی‌شوند.
+            نسخه ۱.۲ آزمایشی اسنپ افغانستان برای Windows 10/11.
+            رابط ورود و منوی راست‌به‌چپ اصلاح شده، بکاپ و بازیابی سخت‌گیرانه‌تر شده و آزمون خودکار عملیات اصلی دیتابیس، گزارش PDF و بکاپ پیش از ساخت Installer اجرا می‌شود.
+            داده‌های کاربر جدا از فایل‌های برنامه در LocalAppData نگهداری می‌شوند.

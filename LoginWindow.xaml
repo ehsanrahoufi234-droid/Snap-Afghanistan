@@ -1,50 +1,68 @@
 <Window x:Class="SnapAfghanistan.Native.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ورود — اسنپ افغانستان" MinWidth="920" MinHeight="620"
-        WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="CanResizeWithGrip"
+        Title="ورود — اسنپ افغانستان"
+        MinWidth="960" MinHeight="640"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="CanResize"
         Icon="Assets/snap.ico" KeyDown="Window_KeyDown">
     <Grid FlowDirection="LeftToRight" Background="#F3F7FA">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.84*" MinWidth="420"/>
-            <ColumnDefinition Width="1.16*" MinWidth="500"/>
+            <ColumnDefinition Width="44*"/>
+            <ColumnDefinition Width="56*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Login workspace -->
+        <!-- Login workspace: deliberately flexible so Windows scaling cannot crop the form. -->
         <Grid Grid.Column="0" FlowDirection="RightToLeft" Background="#F5F8FA">
-            <Border Width="430" MaxHeight="620" Padding="38,34" Background="White" CornerRadius="24"
+            <Border MaxWidth="430" Padding="34,30" Background="White" CornerRadius="24"
                     BorderBrush="#E1E9EF" BorderThickness="1" Effect="{StaticResource FloatingShadow}"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="34">
+                    HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="34,28">
                 <Grid>
-                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
-                    <Grid>
-                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="درگاه مدیریت" Style="{StaticResource EyebrowStyle}"/>
-                            <TextBlock Text="ورود به حساب مدیر" FontSize="27" FontWeight="SemiBold" Margin="0,5,0,0"/>
-                        </StackPanel>
-                        <Border Grid.Column="1" Width="44" Height="44" Background="#E6F2F7" CornerRadius="13">
-                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="19" Foreground="{StaticResource PrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid FlowDirection="LeftToRight">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="44" Height="44" Background="#E6F2F7" CornerRadius="13" HorizontalAlignment="Left">
+                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="19"
+                                       Foreground="{StaticResource PrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
+                        <StackPanel Grid.Column="1" FlowDirection="RightToLeft" VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="درگاه مدیریت" Style="{StaticResource EyebrowStyle}" TextAlignment="Right"/>
+                            <TextBlock Text="ورود به حساب مدیر" FontSize="27" FontWeight="SemiBold" Margin="0,5,0,0" TextAlignment="Right"/>
+                        </StackPanel>
                     </Grid>
 
-                    <Border Grid.Row="1" Height="1" Background="#E7EDF2" Margin="0,22,0,23"/>
+                    <Border Grid.Row="1" Height="1" Background="#E7EDF2" Margin="0,20,0,21"/>
 
-                    <StackPanel Grid.Row="2">
-                        <TextBlock x:Name="ModeText" Text="ورود امن به سامانه" Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,0,0,20"/>
-                        <TextBlock Text="نام کاربری" Style="{StaticResource FieldLabelStyle}"/>
+                    <StackPanel Grid.Row="2" FlowDirection="RightToLeft">
+                        <TextBlock x:Name="ModeText" Text="ورود امن به سامانه" Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,0,0,18" TextAlignment="Right"/>
+
+                        <TextBlock Text="نام کاربری" Style="{StaticResource FieldLabelStyle}" TextAlignment="Right"/>
                         <TextBox x:Name="Username" Text="admin" FlowDirection="LeftToRight" TextAlignment="Left"/>
-                        <TextBlock Text="رمز عبور" Style="{StaticResource FieldLabelStyle}" Margin="0,17,0,7"/>
+
+                        <TextBlock Text="رمز عبور" Style="{StaticResource FieldLabelStyle}" Margin="0,15,0,7" TextAlignment="Right"/>
                         <PasswordBox x:Name="Password" FlowDirection="LeftToRight"/>
-                        <StackPanel x:Name="ConfirmPanel">
-                            <TextBlock Text="تکرار رمز عبور" Style="{StaticResource FieldLabelStyle}" Margin="0,17,0,7"/>
+
+                        <StackPanel x:Name="ConfirmPanel" FlowDirection="RightToLeft">
+                            <TextBlock Text="تکرار رمز عبور" Style="{StaticResource FieldLabelStyle}" Margin="0,15,0,7" TextAlignment="Right"/>
                             <PasswordBox x:Name="ConfirmPassword" FlowDirection="LeftToRight"/>
                         </StackPanel>
-                        <TextBlock x:Name="ErrorText" Foreground="{StaticResource RedBrush}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,0" MinHeight="20"/>
+
+                        <TextBlock x:Name="ErrorText" Foreground="{StaticResource RedBrush}" FontWeight="SemiBold"
+                                   TextWrapping="Wrap" TextAlignment="Right" Margin="0,11,0,0" MinHeight="20"/>
+
                         <Button x:Name="LoginButton" Style="{StaticResource PrimaryButton}" Content="ورود به سامانه"
-                                Margin="0,12,0,0" Height="50" FontSize="14" Click="Login_Click"/>
-                        <Border Background="#F3F7F9" CornerRadius="10" Padding="12,9" Margin="0,17,0,0">
-                            <TextBlock Text="اطلاعات شما فقط در همین کمپیوتر نگهداری می‌شود" Foreground="{StaticResource MutedBrush}" FontSize="11" TextAlignment="Center"/>
+                                Margin="0,11,0,0" Height="50" FontSize="14" Click="Login_Click"/>
+
+                        <Border Background="#F3F7F9" CornerRadius="10" Padding="12,9" Margin="0,15,0,0">
+                            <TextBlock Text="اطلاعات شما فقط در همین کمپیوتر نگهداری می‌شود"
+                                       Foreground="{StaticResource MutedBrush}" FontSize="11" TextAlignment="Center"/>
                         </Border>
                     </StackPanel>
                 </Grid>
@@ -60,43 +78,70 @@
                     <GradientStop Color="#0B806D" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
+
             <Grid ClipToBounds="True" FlowDirection="RightToLeft">
                 <Ellipse Width="660" Height="660" Fill="#08FFFFFF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-250,-330,0,0"/>
                 <Ellipse Width="430" Height="430" Fill="#07FFFFFF" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-170,-210"/>
-                <Border Width="520" Height="520" BorderBrush="#09FFFFFF" BorderThickness="1" CornerRadius="260" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-310,0"/>
+                <Border Width="520" Height="520" BorderBrush="#09FFFFFF" BorderThickness="1" CornerRadius="260"
+                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-310,0"/>
 
-                <StackPanel Width="570" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="54">
-                    <Grid>
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="138"/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="138" Height="98" Padding="10" Background="#F7FFFFFF" CornerRadius="18" HorizontalAlignment="Right">
+                <StackPanel MaxWidth="590" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="42,32">
+                    <Grid FlowDirection="LeftToRight">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="138"/>
+                            <ColumnDefinition Width="18"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="138" Height="98" Padding="10" Background="#F7FFFFFF" CornerRadius="18" HorizontalAlignment="Left">
                             <Image Source="Assets/snap-logo.png" Stretch="Uniform"/>
                         </Border>
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                            <TextBlock Text="اسنپ افغانستان" Foreground="White" FontSize="38" FontWeight="SemiBold"/>
-                            <TextBlock Text="سامانه مدیریت اعضا و مراکز" Foreground="#BFDCE8" FontSize="14" Margin="0,7,0,0"/>
+                        <StackPanel Grid.Column="2" FlowDirection="RightToLeft" VerticalAlignment="Center">
+                            <TextBlock Text="اسنپ افغانستان" Foreground="White" FontSize="38" FontWeight="SemiBold" TextAlignment="Right"/>
+                            <TextBlock Text="سامانه مدیریت اعضا و مراکز" Foreground="#BFDCE8" FontSize="14" Margin="0,7,0,0" TextAlignment="Right"/>
                         </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="مدیریت روشن، سریع و منظم برای کار روزانه دفتر" Foreground="White" FontSize="25" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,38,0,10"/>
-                    <TextBlock Text="ثبت اعضا، مراکز همکار، اشتراک‌ها، پرداخت‌ها و گزارش‌های رسمی در یک محیط بومی و کاملاً آفلاین." Foreground="#D6E7EE" FontSize="15" LineHeight="28" TextWrapping="Wrap" MaxWidth="560"/>
+                    <TextBlock Text="مدیریت روشن، سریع و منظم برای کار روزانه دفتر" Foreground="White" FontSize="25"
+                               FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Right" Margin="0,34,0,9"/>
+                    <TextBlock Text="ثبت اعضا، مراکز همکار، اشتراک‌ها، پرداخت‌ها و گزارش‌های رسمی در یک محیط بومی و کاملاً آفلاین."
+                               Foreground="#D6E7EE" FontSize="15" LineHeight="28" TextWrapping="Wrap" TextAlignment="Right" MaxWidth="560"/>
 
-                    <Grid Margin="0,34,0,0">
-                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="13"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                    <Grid Margin="0,30,0,0" FlowDirection="LeftToRight">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="13"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
                         <Border Grid.Column="0" Background="#16FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1" CornerRadius="14" Padding="16,13">
-                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="38"/><ColumnDefinition/></Grid.ColumnDefinitions>
-                                <Border Width="34" Height="34" Background="#1FFFFFFF" CornerRadius="10"><TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="#8BE1C8" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-                                <StackPanel Grid.Column="1" Margin="10,0,0,0"><TextBlock Text="دیتای امن محلی" Foreground="White" FontWeight="SemiBold"/><TextBlock Text="مستقل از فایل برنامه" Foreground="#BDD4DE" FontSize="11" Margin="0,3,0,0"/></StackPanel>
+                            <Grid FlowDirection="LeftToRight">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="38"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Border Width="34" Height="34" Background="#1FFFFFFF" CornerRadius="10">
+                                    <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="#8BE1C8" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" FlowDirection="RightToLeft" Margin="10,0,0,0">
+                                    <TextBlock Text="دیتای امن محلی" Foreground="White" FontWeight="SemiBold" TextAlignment="Right"/>
+                                    <TextBlock Text="مستقل از فایل برنامه" Foreground="#BDD4DE" FontSize="11" Margin="0,3,0,0" TextAlignment="Right"/>
+                                </StackPanel>
                             </Grid>
                         </Border>
+
                         <Border Grid.Column="2" Background="#16FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1" CornerRadius="14" Padding="16,13">
-                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="38"/><ColumnDefinition/></Grid.ColumnDefinitions>
-                                <Border Width="34" Height="34" Background="#1FFFFFFF" CornerRadius="10"><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" Foreground="#8FC9F1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
-                                <StackPanel Grid.Column="1" Margin="10,0,0,0"><TextBlock Text="اجرای سریع بومی" Foreground="White" FontWeight="SemiBold"/><TextBlock Text="بدون مرورگر و اینترنت" Foreground="#BDD4DE" FontSize="11" Margin="0,3,0,0"/></StackPanel>
+                            <Grid FlowDirection="LeftToRight">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="38"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Border Width="34" Height="34" Background="#1FFFFFFF" CornerRadius="10">
+                                    <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" Foreground="#8FC9F1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" FlowDirection="RightToLeft" Margin="10,0,0,0">
+                                    <TextBlock Text="اجرای سریع بومی" Foreground="White" FontWeight="SemiBold" TextAlignment="Right"/>
+                                    <TextBlock Text="بدون مرورگر و اینترنت" Foreground="#BDD4DE" FontSize="11" Margin="0,3,0,0" TextAlignment="Right"/>
+                                </StackPanel>
                             </Grid>
                         </Border>
                     </Grid>
 
-                    <TextBlock Text="SNAP DESKTOP  •  VERSION 1.1" Foreground="#8DB5C5" FontSize="10" FontWeight="Bold" FlowDirection="LeftToRight" Margin="0,38,0,0"/>
+                    <TextBlock Text="SNAP DESKTOP  •  VERSION 1.2 PREVIEW" Foreground="#8DB5C5" FontSize="10"
+                               FontWeight="Bold" FlowDirection="LeftToRight" Margin="0,34,0,0"/>
                 </StackPanel>
             </Grid>
         </Border>

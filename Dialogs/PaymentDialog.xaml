@@ -1,14 +1,21 @@
 <Window x:Class="SnapAfghanistan.Native.Dialogs.PaymentDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ثبت پرداخت" Width="590" Height="650" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="../Assets/snap.ico">
-    <Grid Background="{StaticResource BackgroundBrush}" Margin="20"><Border Style="{StaticResource CardStyle}" Padding="24"><ScrollViewer><StackPanel>
-        <TextBlock Text="ثبت پرداخت اشتراک" Style="{StaticResource PageTitleStyle}"/><TextBlock x:Name="CenterName" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,22"/>
-        <TextBlock Text="مبلغ پرداخت (افغانی)" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="AmountText" FlowDirection="LeftToRight" TextAlignment="Left"/>
-        <TextBlock Text="تاریخ پرداخت (میلادی)" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><DatePicker x:Name="PaymentDate" SelectedDateChanged="Date_Changed"/><TextBlock x:Name="PaymentSolar" Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,4,0,0"/>
-        <TextBlock Text="تعداد ماه پوشش" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><ComboBox x:Name="MonthsCombo"/>
-        <TextBlock Text="شماره رسید" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><TextBox x:Name="ReceiptText" FlowDirection="LeftToRight" TextAlignment="Left"/><TextBlock Text="اگر خالی باشد، سیستم شماره رسید می‌سازد." Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,4,0,0"/>
-        <TextBlock Text="توضیحات" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><TextBox x:Name="NotesText" Height="70" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"/>
-        <TextBlock x:Name="ErrorText" Foreground="{StaticResource RedBrush}" FontWeight="SemiBold" Margin="0,12,0,0"/>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,19,0,0"><Button Content="انصراف" Style="{StaticResource GhostButton}" Width="105" IsCancel="True"/><Button Content="ثبت و صدور رسید" Style="{StaticResource SuccessButton}" Width="155" Margin="8,0,0,0" Click="Save_Click"/></StackPanel>
-    </StackPanel></ScrollViewer></Border></Grid>
+        Title="پرداخت اشتراک" Width="590" Height="650" MinHeight="560" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="../Assets/snap.ico">
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions><RowDefinition/><RowDefinition Height="74"/></Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Border Style="{StaticResource CardStyle}" Margin="20" Padding="24"><StackPanel>
+                <TextBlock x:Name="HeaderTitle" Text="ثبت پرداخت اشتراک" Style="{StaticResource PageTitleStyle}"/><TextBlock x:Name="CenterName" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,22"/>
+                <TextBlock Text="مبلغ پرداخت (افغانی)" Style="{StaticResource FieldLabelStyle}"/><TextBox x:Name="AmountText" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                <TextBlock Text="تاریخ پرداخت (هجری شمسی)" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><TextBox x:Name="PaymentDateText" FlowDirection="LeftToRight" TextAlignment="Left" ToolTip="مثال: 1405/05/30"/><TextBlock x:Name="PaymentGregorian" Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,4,0,0"/>
+                <TextBlock Text="تعداد ماه پوشش" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><ComboBox x:Name="MonthsCombo"/>
+                <TextBlock Text="شماره رسید" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><TextBox x:Name="ReceiptText" FlowDirection="LeftToRight" TextAlignment="Left"/><TextBlock Text="برای پرداخت جدید اگر خالی باشد، سیستم شماره رسید می‌سازد." Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,4,0,0"/>
+                <TextBlock Text="توضیحات" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><TextBox x:Name="NotesText" Height="70" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"/>
+                <TextBlock x:Name="ErrorText" Foreground="{StaticResource RedBrush}" FontWeight="SemiBold" Margin="0,12,0,0" TextWrapping="Wrap"/>
+            </StackPanel></Border>
+        </ScrollViewer>
+        <Border Grid.Row="1" Background="White" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="18,12">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"><Button Content="انصراف" Style="{StaticResource GhostButton}" Width="105" IsCancel="True"/><Button x:Name="SaveButton" Content="ثبت و صدور رسید" Style="{StaticResource SuccessButton}" Width="160" Margin="8,0,0,0" Click="Save_Click" IsDefault="True"/></StackPanel>
+        </Border>
+    </Grid>
 </Window>

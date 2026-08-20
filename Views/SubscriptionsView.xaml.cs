@@ -101,7 +101,14 @@ namespace SnapAfghanistan.Native.Views
         {
             var dialog = new SaveFileDialog { Title = "ذخیره گزارش مراکز معوق", Filter = "PDF|*.pdf", FileName = "Snap-Overdue-Centers.pdf" };
             if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
-            try { var table = _repository.BuildReport("debtors"); new ReportService().ExportTablePdf(table, dialog.FileName, "مراکز دارای اشتراک معوق", _repository.GetSettings().CompanyName); _toast("گزارش PDF ساخته شد."); Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true }); }
+            try
+            {
+                var table = _repository.BuildReport("debtors");
+                DateService.NormalizeReportDates(table);
+                new ReportService().ExportTablePdf(table, dialog.FileName, "مراکز دارای اشتراک معوق", _repository.GetSettings().CompanyName);
+                _toast("گزارش PDF با تاریخ هجری شمسی ساخته شد.");
+                Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true });
+            }
             catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطای PDF", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
     }

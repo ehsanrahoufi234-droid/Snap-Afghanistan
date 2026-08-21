@@ -1,0 +1,28 @@
+<Window x:Class="SnapAfghanistan.Native.Dialogs.UserManagementDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="مدیریت کاربران و صلاحیت‌ها" Width="1050" Height="700" MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="../Assets/snap.ico" FlowDirection="RightToLeft">
+    <Grid Background="{StaticResource BackgroundBrush}" Margin="18">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
+        <Border Style="{StaticResource CardStyle}" Padding="18" Margin="0,0,0,12"><Grid><StackPanel><TextBlock Text="کاربران و سطح دسترسی" Style="{StaticResource PageTitleStyle}"/><TextBlock Text="هر کاربر حساب مستقل دارد؛ صلاحیت‌های اختصاصی روی نقش پایه اعمال می‌شوند." Foreground="{StaticResource MutedBrush}" Margin="0,5,0,0"/></StackPanel><Button Content="کاربر جدید" Style="{StaticResource PrimaryButton}" Width="120" HorizontalAlignment="Left" Click="New_Click"/></Grid></Border>
+        <Grid Grid.Row="1"><Grid.ColumnDefinitions><ColumnDefinition Width="1.15*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="0.85*"/></Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="0" ClipToBounds="True"><DataGrid x:Name="UsersGrid" SelectionChanged="UsersGrid_SelectionChanged" AutoGenerateColumns="False"><DataGrid.Columns>
+                <DataGridTextColumn Header="نام" Binding="{Binding DisplayName}" Width="2*"/><DataGridTextColumn Header="نام کاربری" Binding="{Binding Username}" Width="*"/><DataGridTextColumn Header="نقش" Binding="{Binding RoleName}" Width="110"/><DataGridCheckBoxColumn Header="فعال" Binding="{Binding IsActive}" Width="70"/><DataGridTextColumn Header="آخرین ورود" Binding="{Binding LastLoginAt}" Width="150"/>
+            </DataGrid.Columns></DataGrid></Border>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+                <TextBlock x:Name="EditorTitle" Text="کاربر جدید" Style="{StaticResource SectionTitleStyle}"/>
+                <TextBlock Text="نام نمایشی" Style="{StaticResource FieldLabelStyle}" Margin="0,16,0,7"/><TextBox x:Name="DisplayNameText"/>
+                <TextBlock Text="نام کاربری" Style="{StaticResource FieldLabelStyle}" Margin="0,12,0,7"/><TextBox x:Name="UsernameText" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                <TextBlock Text="نقش" Style="{StaticResource FieldLabelStyle}" Margin="0,12,0,7"/><ComboBox x:Name="RoleCombo" DisplayMemberPath="Name" SelectedValuePath="Key"/>
+                <CheckBox x:Name="ActiveCheck" Content="حساب فعال باشد" IsChecked="True" Margin="0,14,0,0" FontWeight="SemiBold"/>
+                <TextBlock Text="رمز موقت" Style="{StaticResource FieldLabelStyle}" Margin="0,12,0,7"/><PasswordBox x:Name="PasswordText" FlowDirection="LeftToRight"/><TextBlock x:Name="PasswordHint" Text="برای کاربر جدید حداقل ۸ نویسه. در ویرایش فقط برای تغییر رمز استفاده می‌شود." Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,15,0,0"><Button x:Name="SaveUserButton" Content="ذخیره کاربر" Style="{StaticResource PrimaryButton}" Width="115" Click="SaveUser_Click"/><Button x:Name="ResetPasswordButton" Content="تنظیم رمز موقت" Style="{StaticResource SecondaryButton}" Width="125" Margin="8,0,0,0" Click="ResetPassword_Click"/></StackPanel>
+                <Border Height="1" Background="{StaticResource LineBrush}" Margin="0,19,0,16"/>
+                <TextBlock Text="صلاحیت‌های این کاربر" Style="{StaticResource SectionTitleStyle}"/><TextBlock Text="تیک‌ها سطح دسترسی مؤثر را نشان می‌دهند. تغییر هر تیک به‌عنوان استثنا روی نقش ذخیره می‌شود." Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" Margin="0,5,0,10"/>
+                <ItemsControl x:Name="PermissionList"><ItemsControl.ItemTemplate><DataTemplate><CheckBox Content="{Binding Title}" IsChecked="{Binding Allowed, Mode=TwoWay}" Tag="{Binding Key}" Margin="0,5"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,13,0,0"><Button Content="ذخیره صلاحیت‌ها" Style="{StaticResource SuccessButton}" Width="125" Click="SavePermissions_Click"/><Button Content="برگشت به نقش پایه" Style="{StaticResource GhostButton}" Width="125" Margin="8,0,0,0" Click="ResetPermissions_Click"/></StackPanel>
+                <TextBlock x:Name="ErrorText" Foreground="{StaticResource RedBrush}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,0"/>
+            </StackPanel></ScrollViewer></Border>
+        </Grid>
+    </Grid>
+</Window>

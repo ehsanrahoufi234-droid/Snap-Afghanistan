@@ -11,9 +11,9 @@
     <ApplicationIcon>Assets\snap.ico</ApplicationIcon>
     <AssemblyName>SnapAfghanistan</AssemblyName>
     <RootNamespace>SnapAfghanistan.Native</RootNamespace>
-    <Version>1.3.0</Version>
-    <FileVersion>1.3.0.0</FileVersion>
-    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <Version>1.4.0</Version>
+    <FileVersion>1.4.0.0</FileVersion>
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <Deterministic>true</Deterministic>
@@ -30,6 +30,8 @@
   <ItemGroup>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 
   <ItemGroup>

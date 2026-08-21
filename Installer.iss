@@ -36,7 +36,7 @@ Name: desktopicon; Description: "ایجاد میان‌بر اسنپ افغان�
 [Run]
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=\"Snap Afghanistan LAN\""; Flags: runhidden
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=\"Snap Afghanistan LAN\" dir=in action=allow protocol=TCP localport=47821 profile=private"; Flags: runhidden
-Filename: "{app}\SnapAfghanistan.exe"; Description: "اجرای اسنپ افغانستان"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\SnapAfghanistan.exe"; Description: "اجرای اسنپ افغانستان"; Flags: nowait postinstall skipifsilent runasoriginaluser
 [UninstallRun]
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=\"Snap Afghanistan LAN\""; Flags: runhidden
 

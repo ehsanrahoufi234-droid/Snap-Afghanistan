@@ -21,10 +21,13 @@ namespace SnapAfghanistan.Native.Services
             using (var connection = Database.Open())
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = @"SELECT payment_date, amount
-FROM subscription_payments
-WHERE payment_date>=@start AND payment_date<@end
-ORDER BY payment_date";
+                command.CommandText = @"SELECT sp.payment_date, sp.amount
+FROM subscription_payments sp
+JOIN partners p ON p.id=sp.partner_id
+WHERE p.deleted_at IS NULL
+  AND sp.payment_date>=@start
+  AND sp.payment_date<@end
+ORDER BY sp.payment_date";
                 command.Parameters.AddWithValue("@start", DateService.Iso(startMonth));
                 command.Parameters.AddWithValue("@end", DateService.Iso(endMonth));
                 using (var reader = command.ExecuteReader())

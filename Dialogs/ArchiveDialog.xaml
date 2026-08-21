@@ -1,18 +1,46 @@
 <Window x:Class="SnapAfghanistan.Native.Dialogs.ArchiveDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="بایگانی" Width="900" Height="620" MinWidth="760" MinHeight="520"
+        Title="بایگانی" Width="920" Height="640" MinWidth="760" MinHeight="520"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Icon="../Assets/snap.ico">
-    <Grid Background="{StaticResource BackgroundBrush}">
-        <Grid.RowDefinitions><RowDefinition Height="92"/><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="74"/></Grid.RowDefinitions>
-        <Border Background="{StaticResource NavyBrush}" Padding="26,16">
-            <Grid><StackPanel><TextBlock Text="بایگانی‌شده‌ها" Foreground="White" FontSize="24" FontWeight="SemiBold"/><TextBlock Text="مشاهده، بازگردانی یا انتقال رکوردهای بایگانی‌شده به سطل زباله" Foreground="#B6C9D6" FontSize="11" Margin="0,5,0,0"/></StackPanel><Border HorizontalAlignment="Left" Width="44" Height="44" Background="#18FFFFFF" CornerRadius="13"><TextBlock Text="&#xE7B8;" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></Grid>
+    <Grid Background="{StaticResource BackgroundBrush}" FlowDirection="RightToLeft">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="104"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{StaticResource NavyBrush}" Padding="24,16">
+            <Grid FlowDirection="LeftToRight">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="56"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Width="46" Height="46" Background="#18FFFFFF" CornerRadius="13" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBlock Text="&#xE7B8;" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" FlowDirection="RightToLeft">
+                    <TextBlock Text="بایگانی‌شده‌ها" Foreground="White" FontSize="24" FontWeight="SemiBold" TextAlignment="Right"/>
+                    <TextBlock Text="مشاهده، بازگردانی یا انتقال رکوردهای بایگانی‌شده به سطل زباله" Foreground="#B6C9D6" FontSize="11" Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Right"/>
+                </StackPanel>
+            </Grid>
         </Border>
+
         <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="18,16,18,12" Padding="14">
-            <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="210"/></Grid.ColumnDefinitions><TextBlock x:Name="CountText" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold"/><ComboBox x:Name="TypeFilter" Grid.Column="1" SelectionChanged="Filter_Changed"/></Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="18"/>
+                    <ColumnDefinition Width="210"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="CountText" Grid.Column="0" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                <ComboBox x:Name="TypeFilter" Grid.Column="2" SelectionChanged="Filter_Changed"/>
+            </Grid>
         </Border>
+
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="18,0" Padding="0" ClipToBounds="True">
-            <DataGrid x:Name="Grid" AlternationCount="2" SelectionMode="Single">
+            <DataGrid x:Name="Grid" AlternationCount="2" SelectionMode="Single" HorizontalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="نوع" Binding="{Binding EntityType}" Width="100"/>
                     <DataGridTextColumn Header="نام / عنوان" Binding="{Binding Title}" Width="2*" MinWidth="190"/>
@@ -21,8 +49,20 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
-        <Border Grid.Row="3" Background="White" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="18,12">
-            <Grid><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="بازگردانی به حالت فعال" Style="{StaticResource SuccessButton}" MinWidth="155" Click="Restore_Click"/><Button Content="انتقال به سطل زباله" Style="{StaticResource DangerButton}" MinWidth="155" Margin="8,0,0,0" Click="Delete_Click"/></StackPanel><Button Content="بستن" Style="{StaticResource GhostButton}" Width="105" HorizontalAlignment="Left" IsCancel="True"/></Grid>
+
+        <Border Grid.Row="3" Background="White" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="18,12" Margin="0,12,0,0">
+            <Grid FlowDirection="LeftToRight">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="بستن" Style="{StaticResource GhostButton}" Width="105" IsCancel="True"/>
+                <WrapPanel Grid.Column="2" HorizontalAlignment="Right" FlowDirection="RightToLeft">
+                    <Button Content="بازگردانی به حالت فعال" Style="{StaticResource SuccessButton}" MinWidth="165" Click="Restore_Click"/>
+                    <Button Content="انتقال به سطل زباله" Style="{StaticResource DangerButton}" MinWidth="165" Margin="8,0,0,0" Click="Delete_Click"/>
+                </WrapPanel>
+            </Grid>
         </Border>
     </Grid>
 </Window>

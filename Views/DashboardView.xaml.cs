@@ -14,15 +14,13 @@ namespace SnapAfghanistan.Native.Views
 {
     public partial class DashboardView : UserControl, IRefreshable
     {
-        private readonly SnapRepository _repository;
-        private readonly DashboardAnalyticsService _analytics;
+        private readonly ISnapService _service;
         private readonly Action<string>? _openSubscriptions;
 
-        public DashboardView(SnapRepository repository, Action<string>? openSubscriptions = null)
+        public DashboardView(ISnapService service, Action<string>? openSubscriptions = null)
         {
             InitializeComponent();
-            _repository = repository;
-            _analytics = new DashboardAnalyticsService();
+            _service = service;
             _openSubscriptions = openSubscriptions;
             MakeHealthIndicatorClickable(NearDueSmall, "نزدیک سررسید");
             MakeHealthIndicatorClickable(OverdueSmall, "معوق");
@@ -43,35 +41,41 @@ namespace SnapAfghanistan.Native.Views
 
         public void RefreshData()
         {
-            var stats = _repository.GetDashboard();
-            var trend = _analytics.GetRevenueTrend(6);
+            try
+            {
+                var stats = _service.GetDashboard();
+                var trend = _service.GetRevenueTrend(6);
+                var currentMonthRevenue = trend.Count == 0 ? 0m : trend[trend.Count - 1].Amount;
 
-            ActiveMembers.Text = Format(stats.ActiveMembers);
-            Centers.Text = Format(stats.RegisteredCenters);
-            MonthRevenue.Text = Money(stats.MonthRevenue);
-            Overdue.Text = Format(stats.Overdue);
-            OverdueSmall.Text = Format(stats.Overdue);
-            NearDueSmall.Text = Format(stats.NearDue);
-            Suspended.Text = Format(stats.Suspended);
-            ActiveSectors.Text = Format(stats.ActiveSectors);
+                ActiveMembers.Text = Format(stats.ActiveMembers);
+                Centers.Text = Format(stats.RegisteredCenters);
+                MonthRevenue.Text = Money(currentMonthRevenue);
+                Overdue.Text = Format(stats.Overdue);
+                OverdueSmall.Text = Format(stats.Overdue);
+                NearDueSmall.Text = Format(stats.NearDue);
+                Suspended.Text = Format(stats.Suspended);
+                ActiveSectors.Text = Format(stats.ActiveSectors);
 
-            Teachers.Text = TypeCount(stats, "معلم");
-            Scholars.Text = TypeCount(stats, "عالم");
-            Professors.Text = TypeCount(stats, "استاد پوهنتون");
-            Cultural.Text = TypeCount(stats, "فرهنگی");
-            Students.Text = TypeCount(stats, "شاگرد");
+                Teachers.Text = TypeCount(stats, "معلم");
+                Scholars.Text = TypeCount(stats, "عالم");
+                Professors.Text = TypeCount(stats, "استاد پوهنتون");
+                Cultural.Text = TypeCount(stats, "فرهنگی");
+                Students.Text = TypeCount(stats, "شاگرد");
 
-            Summary.Text = Format(stats.ActiveMembers) + " عضو فعال، " + Format(stats.RegisteredCenters) +
-                           " مرکز و " + Format(stats.ActiveSectors) + " سکتور فعال در سیستم ثبت است.";
-
-            RenderRevenue(trend);
+                Summary.Text = Format(stats.ActiveMembers) + " عضو فعال، " + Format(stats.RegisteredCenters) +
+                               " مرکز و " + Format(stats.ActiveSectors) + " سکتور فعال در سیستم ثبت است.";
+                RenderRevenue(trend);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(UiMessages.Friendly(ex), "داشبورد", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void RenderRevenue(IReadOnlyList<RevenueTrendPoint> trend)
         {
             RevenueMonths.ItemsSource = trend;
             RevenuePointLayer.Children.Clear();
-
             if (trend.Count == 0)
             {
                 RevenueLine.Points = new PointCollection();
@@ -89,14 +93,11 @@ namespace SnapAfghanistan.Native.Views
             AverageRevenue.Text = Money(average);
             PeakMonth.Text = peak.Amount <= 0 ? "داده‌ای ثبت نشده" : peak.Label + "  •  " + Money(peak.Amount);
 
-            const double xStart = 26;
-            const double xEnd = 694;
-            const double yTop = 30;
-            const double yBottom = 168;
+            const double xStart = 26, xEnd = 694, yTop = 30, yBottom = 168;
             var max = trend.Max(item => item.Amount);
             if (max <= 0) max = 1;
-
             var linePoints = new PointCollection();
+
             for (var i = 0; i < trend.Count; i++)
             {
                 var x = trend.Count == 1 ? (xStart + xEnd) / 2 : xStart + ((xEnd - xStart) * i / (trend.Count - 1));

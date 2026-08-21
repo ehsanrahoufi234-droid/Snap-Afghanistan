@@ -13,27 +13,28 @@ namespace SnapAfghanistan.Native.Views
 {
     public partial class CentersView : UserControl, IRefreshable
     {
-        private readonly SnapRepository _repository;
-        private readonly OperationsService _operations = new OperationsService();
+        private readonly ISnapService _service;
         private readonly Action<string> _toast;
         private int _page = 1;
         private const int PageSize = 200;
         private PagedResult<CenterListItem>? _current;
 
-        public CentersView(SnapRepository repository, Action<string> toast)
+        public CentersView(ISnapService service, Action<string> toast)
         {
             InitializeComponent();
-            _repository = repository;
+            _service = service;
             _toast = toast;
             StatusFilter.ItemsSource = new[] { "همه", "فعال", "نزدیک سررسید", "معوق", "تعلیق", "تنظیم نشده" };
             StatusFilter.SelectedIndex = 0;
             LoadSectors();
+            AddButton.Visibility = EditButton.Visibility = SectorsButton.Visibility = SessionContext.Has(PermissionCatalog.CentersWrite) ? Visibility.Visible : Visibility.Collapsed;
+            ArchiveButton.Visibility = DeleteButton.Visibility = SessionContext.Has(PermissionCatalog.CentersDelete) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LoadSectors()
         {
             var sectors = new List<SectorItem> { new SectorItem { Id = "همه", Name = "همه سکتورها" } };
-            sectors.AddRange(_repository.GetSectors(false).Where(x => x.Status != "بایگانی"));
+            sectors.AddRange(_service.GetSectors(false).Where(x => x.Status != "بایگانی"));
             SectorFilter.ItemsSource = sectors;
             SectorFilter.SelectedIndex = 0;
         }
@@ -43,17 +44,25 @@ namespace SnapAfghanistan.Native.Views
             try
             {
                 var sector = Convert.ToString(SectorFilter.SelectedValue) ?? "همه";
-                _current = _repository.SearchCenters(SearchText.Text, sector, Convert.ToString(StatusFilter.SelectedItem) ?? "همه", _page, PageSize);
-                if (_page > _current.TotalPages) { _page = _current.TotalPages; RefreshData(); return; }
+                _current = _service.SearchCenters(SearchText.Text, sector, Convert.ToString(StatusFilter.SelectedItem) ?? "همه", _page, PageSize);
+                if (_page > _current.TotalPages)
+                {
+                    _page = _current.TotalPages;
+                    RefreshData();
+                    return;
+                }
                 var visible = _current.Items.Where(x => x.Status != "بایگانی").ToList();
                 CentersGrid.ItemsSource = visible;
                 CountText.Text = "مراکز قابل نمایش در این صفحه: " + visible.Count.ToString("N0", CultureInfo.InvariantCulture);
                 PageText.Text = "صفحه " + _current.Page.ToString(CultureInfo.InvariantCulture) + " از " + _current.TotalPages.ToString(CultureInfo.InvariantCulture);
                 PreviousButton.IsEnabled = _page > 1;
                 NextButton.IsEnabled = _page < _current.TotalPages;
-                ArchivedCentersButton.Content = "بایگانی‌شده‌ها  " + _operations.CountArchived("مرکز").ToString("N0", CultureInfo.InvariantCulture);
+                ArchivedCentersButton.Content = "بایگانی‌شده‌ها  " + _service.CountArchived("مرکز").ToString("N0", CultureInfo.InvariantCulture);
             }
-            catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "خطا", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception exception)
+            {
+                MessageBox.Show(UiMessages.Friendly(exception), "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private CenterListItem? Selected() => CentersGrid.SelectedItem as CenterListItem;
@@ -62,54 +71,82 @@ namespace SnapAfghanistan.Native.Views
         private void Filter_Changed(object sender, SelectionChangedEventArgs e) { if (IsLoaded) { _page = 1; RefreshData(); } }
         private void Previous_Click(object sender, RoutedEventArgs e) { if (_page > 1) { _page--; RefreshData(); } }
         private void Next_Click(object sender, RoutedEventArgs e) { if (_current != null && _page < _current.TotalPages) { _page++; RefreshData(); } }
-        private void Grid_DoubleClick(object sender, MouseButtonEventArgs e) { if (Selected() != null) EditSelected(); }
-        private void Add_Click(object sender, RoutedEventArgs e) { var dialog = new CenterDialog(_repository) { Owner = Window.GetWindow(this) }; if (dialog.ShowDialog() == true) Save(dialog); }
+        private void Grid_DoubleClick(object sender, MouseButtonEventArgs e) { if (Selected() != null && SessionContext.Has(PermissionCatalog.CentersWrite)) EditSelected(); }
+
+        private void Add_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new CenterDialog(_service) { Owner = Window.GetWindow(this) };
+            if (dialog.ShowDialog() == true) Save(dialog);
+        }
+
         private void Edit_Click(object sender, RoutedEventArgs e) => EditSelected();
 
         private void EditSelected()
         {
-            var selected = Selected(); if (selected == null) { _toast("ابتدا یک مرکز را انتخاب کنید."); return; }
-            var record = _repository.GetCenter(selected.Id); if (record == null) return;
-            var dialog = new CenterDialog(_repository, record) { Owner = Window.GetWindow(this) };
+            var selected = Selected();
+            if (selected == null) { _toast("ابتدا یک مرکز را انتخاب کنید."); return; }
+            var record = _service.GetCenter(selected.Id);
+            if (record == null) return;
+            var dialog = new CenterDialog(_service, record) { Owner = Window.GetWindow(this) };
             if (dialog.ShowDialog() == true) Save(dialog);
         }
 
         private void Save(CenterDialog dialog)
         {
-            try { _repository.SaveCenter(dialog.Result); RefreshData(); _toast("مرکز با موفقیت ذخیره شد."); }
-            catch (Exception exception) { MessageBox.Show(UiMessages.Friendly(exception), "ذخیره نشد", MessageBoxButton.OK, MessageBoxImage.Warning); }
+            try
+            {
+                _service.SaveCenter(dialog.Result);
+                RefreshData();
+                (Window.GetWindow(this) as MainWindow)?.RefreshAllPages();
+                _toast("مرکز با موفقیت ذخیره شد.");
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(UiMessages.Friendly(exception), "ذخیره نشد", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void Sectors_Click(object sender, RoutedEventArgs e)
         {
-            new SectorsDialog(_repository) { Owner = Window.GetWindow(this) }.ShowDialog();
+            new SectorsDialog(_service) { Owner = Window.GetWindow(this) }.ShowDialog();
             LoadSectors();
             RefreshData();
+            (Window.GetWindow(this) as MainWindow)?.RefreshAllPages();
         }
 
         private void Archive_Click(object sender, RoutedEventArgs e)
         {
-            var selected = Selected(); if (selected == null) { _toast("ابتدا یک مرکز را انتخاب کنید."); return; }
+            var selected = Selected();
+            if (selected == null) { _toast("ابتدا یک مرکز را انتخاب کنید."); return; }
             if (MessageBox.Show("مرکز «" + selected.Name + "» بایگانی شود؟", "تأیید", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
-            _repository.ArchiveCenter(selected.Id);
+            _service.ArchiveCenter(selected.Id);
             RefreshData();
+            (Window.GetWindow(this) as MainWindow)?.RefreshAllPages();
             _toast("مرکز بایگانی شد.");
         }
 
         private void Archived_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ArchiveDialog("مرکز") { Owner = Window.GetWindow(this) };
+            var dialog = new ArchiveDialog(_service, "مرکز") { Owner = Window.GetWindow(this) };
             dialog.ShowDialog();
-            if (dialog.Changed) RefreshData();
+            if (dialog.Changed)
+            {
+                RefreshData();
+                (Window.GetWindow(this) as MainWindow)?.RefreshAllPages();
+            }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            var selected = Selected(); if (selected == null) { _toast("ابتدا یک مرکز را انتخاب کنید."); return; }
-            if (MessageBox.Show("مرکز «" + selected.Name + "» به سطل زباله انتقال یابد؟\nسوابق پرداخت تا زمان حذف دائمی حفظ می‌شود.", "تأیید حذف", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
-            _repository.DeleteCenter(selected.Id);
+            var selected = Selected();
+            if (selected == null) { _toast("ابتدا یک مرکز را انتخاب کنید."); return; }
+            var message = "مرکز «" + selected.Name + "» به سطل زباله انتقال یابد؟\n\n" +
+                          "سوابق پرداخت برای امکان بازیابی مرکز حفظ می‌شود، اما تا وقتی مرکز در سطل زباله است در درآمد جاری و نمودار درآمد محاسبه نمی‌شود.";
+            if (MessageBox.Show(message, "تأیید حذف", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+            _service.DeleteCenter(selected.Id);
             RefreshData();
-            _toast("مرکز به سطل زباله انتقال یافت.");
+            (Window.GetWindow(this) as MainWindow)?.RefreshAllPages();
+            _toast("مرکز به سطل زباله انتقال یافت و از درآمد فعال خارج شد.");
         }
     }
 }

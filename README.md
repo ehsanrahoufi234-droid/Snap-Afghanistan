@@ -1,40 +1,69 @@
-# Snap Afghanistan Desktop
+# Snap Afghanistan Desktop 1.4
 
-سامانه نصبی و آفلاین مدیریت اعضا و مراکز اسنپ افغانستان برای Windows 10/11.
+Snap Afghanistan is a native Windows desktop management system for members, partner centers, sectors, monthly subscriptions, payments, reports, notes, archives, and backups.
 
-## امکانات نسخه ۱.۲
+## Platform
 
-- ورود امن مدیر با رمز هش‌شده PBKDF2-SHA256
-- رابط ورود Responsive و صفحه اصلی راست‌به‌چپ منظم
-- ثبت، ویرایش، بایگانی، حذف نرم و بازیابی اعضا
-- کد خودکار عضویت و پیوست تذکره خارج از دیتابیس
-- مدیریت سکتورها، مراکز، قرارداد، تخفیف و حق‌الخدمت
-- اشتراک ماهانه، سررسید، وضعیت، پرداخت و شماره رسید
-- گزارش اعضا، مراکز، سکتورها، بدهکاران و درآمد
-- خروجی PDF فارسی با لوگو و CSV
-- یادداشت‌های دفتر و سطل زباله
-- بکاپ یکپارچه دیتابیس و پیوست‌ها با اعتبارسنجی SHA-256
-- بازیابی امن همراه با بکاپ اضطراری، محدودیت استخراج و برگشت خودکار در صورت خطا
-- تقویم هجری شمسی و میلادی
-- SQLite محلی با Foreign Key، WAL، صفحه‌بندی و Virtualization برای بیش از ۲۰٬۰۰۰ عضو
-- آزمون خودکار دیتابیس، CRUD، پرداخت اشتراک، سطل زباله/بازیابی، گزارش PDF و بکاپ قبل از ساخت Installer
+- Native C# / WPF desktop application
+- .NET Framework 4.8, x64
+- Windows 10/11
+- SQLite database owned by the main office computer (Server)
+- Offline LAN/Wi-Fi client/server operation; Internet is not required for core use
 
-## نصب
+## Multi-user architecture
 
-کاربر نهایی فقط فایل `SnapAfghanistan-Setup-1.2.0.exe` را اجرا می‌کند. برنامه در مرورگر باز نمی‌شود و برای استفاده روزمره به Python، SDK یا اینترنت نیاز ندارد.
+Version 1.4 replaces the old single-user-only operating model with real office users and sessions:
 
-اطلاعات اجرایی در مسیر زیر و مستقل از فایل‌های برنامه ذخیره می‌شود:
+- Administrator, accountant, and employee roles
+- Per-user permission overrides
+- Independent usernames and passwords
+- PBKDF2-SHA256 password hashing with per-user salts
+- Session-aware audit identity and machine name
+- Protection against disabling or demoting the last active administrator
+- Optimistic version checks to prevent silent overwrites when two users edit the same record
+
+The Server computer owns the database and attachments. Client computers communicate with it over the local network through the Snap LAN service. The SQLite file is never opened directly through a Windows shared folder.
+
+## Members and documents
+
+- Member CRUD, archive, trash, and restore
+- Fast member search and pagination
+- Quick member details panel
+- Tazkira attachment preview for JPG/PNG
+- Open/save-copy support for source documents including PDF
+- Attachments are stored outside the SQLite file under the controlled data directory
+
+## Centers, sectors, and subscriptions
+
+- Center and sector CRUD, archive, trash, and restore
+- Monthly subscription setup with Solar Hijri dates as the primary UI dates
+- Payment registration, editing, and deletion
+- Payment-chain and next-due-date rebuild after corrections
+- Clickable subscription-health indicators
+- Revenue trend for the latest six Solar Hijri months
+
+If a center is moved to the trash, its payment history is kept so the center can be restored, but those payments are excluded from current revenue cards and the active revenue chart while the center remains deleted. Restoring the center restores its historical contribution. Permanent deletion removes the center payment rows.
+
+## Backup and recovery
+
+Backups contain the central SQLite database, member attachments, a manifest, and a database SHA-256 digest. Restore creates an emergency backup first and validates the replacement before completing. In LAN mode, backup and restore are intentionally available only on the Server computer.
+
+Normal data path on the Server:
 
 `%LOCALAPPDATA%\SnapAfghanistan\Data`
 
-بنابراین حذف یا آپدیت برنامه این پوشه را به‌صورت خودکار پاک نمی‌کند. با این حال قبل از نصب مجدد ویندوز باید از داخل برنامه بکاپ گرفته و فایل بکاپ روی درایو یا حافظه دیگری نگهداری شود.
+## Build validation
 
-## ساخت و کنترل کیفیت
+The Windows CI pipeline performs:
 
-GitHub Actions برنامه را روی Windows می‌سازد. Self-test در یک مسیر داده موقت و جدا از اطلاعات واقعی اجرا می‌شود و عملیات اصلی دیتابیس، گزارش PDF و بکاپ را بررسی می‌کند. فقط پس از عبور از این آزمون، Setup.exe با Inno Setup ساخته می‌شود.
+1. package restore
+2. Release x64 build
+3. native database/CRUD/payment/archive self-test
+4. deleted-center revenue visibility regression test
+5. authenticated loopback LAN server/client smoke test
+6. Inno Setup compilation
+7. installer artifact upload
 
-## محدودیت‌های فعلی
+Installer output:
 
-نسخه ۱.۲ یک برنامه تک‌کمپیوتره با دیتابیس محلی است. اشتراک مستقیم فایل SQLite میان چند کامپیوتر به‌عنوان راهکار شبکه‌ای پشتیبانی نمی‌شود، چون می‌تواند خطر خرابی داده ایجاد کند. برای نسخه چندکاربره باید لایه سرویس/سرور محلی جداگانه پیاده‌سازی شود.
-
-احراز هویت نسخه ۱.۲ فعلاً برای یک حساب مدیر طراحی شده است. نقش‌های جداگانه مدیر/حسابدار/کارمند باید در نسخه چندکاربره به‌صورت اصولی و همراه با Session و Audit مبتنی بر کاربر اضافه شوند، نه با چند رمز وصله‌ای در همین ساختار.
+`SnapAfghanistan-Setup-1.4.0.exe`

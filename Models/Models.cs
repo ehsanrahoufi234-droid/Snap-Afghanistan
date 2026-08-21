@@ -72,6 +72,7 @@ namespace SnapAfghanistan.Native.Models
         public string UpdatedAt { get; set; } = "";
         public string AttachmentPath { get; set; } = "";
         public string AttachmentName { get; set; } = "";
+        public int Version { get; set; }
     }
 
     public sealed class SectorItem
@@ -81,6 +82,7 @@ namespace SnapAfghanistan.Native.Models
         public string Description { get; set; } = "";
         public string Status { get; set; } = "فعال";
         public long CenterCount { get; set; }
+        public int Version { get; set; }
         public override string ToString() => Name;
     }
 
@@ -125,6 +127,7 @@ namespace SnapAfghanistan.Native.Models
         public bool SubscriptionSuspended { get; set; }
         public string Status { get; set; } = "فعال";
         public string Notes { get; set; } = "";
+        public int Version { get; set; }
     }
 
     public sealed class PaymentItem
@@ -142,6 +145,7 @@ namespace SnapAfghanistan.Native.Models
         public string NewDueDate { get; set; } = "";
         public string NewDueDateSolar => DateService.SolarFromIso(NewDueDate);
         public string Notes { get; set; } = "";
+        public int Version { get; set; }
     }
 
     public sealed class NoteItem
@@ -156,6 +160,7 @@ namespace SnapAfghanistan.Native.Models
         public string Status { get; set; } = "باز";
         public string Body { get; set; } = "";
         public string UpdatedAt { get; set; } = "";
+        public int Version { get; set; }
     }
 
     public sealed class ArchivedItem

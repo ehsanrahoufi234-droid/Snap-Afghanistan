@@ -8,7 +8,7 @@ namespace SnapAfghanistan.Native.Data
 {
     public static class Database
     {
-        public const int CurrentSchemaVersion = 4;
+        public const int CurrentSchemaVersion = 5;
 
         public static readonly string RootDirectory = ResolveRootDirectory();
         public static readonly string DataDirectory = System.IO.Path.Combine(RootDirectory, "Data");
@@ -55,6 +55,7 @@ namespace SnapAfghanistan.Native.Data
 
             ApplyMigrations();
             SeedDefaults();
+            IdentitySchema.Ensure();
             SetSetting("schema_version", CurrentSchemaVersion.ToString(CultureInfo.InvariantCulture));
         }
 

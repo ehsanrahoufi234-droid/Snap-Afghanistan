@@ -1,5 +1,5 @@
 #define AppName "Snap Afghanistan"
-#define AppVersion "1.3.0"
+#define AppVersion "1.4.0"
 [Setup]
 AppId={{47F26725-C9DA-42DD-A160-BFBA681D67E5}
 AppName={#AppName}
@@ -7,7 +7,7 @@ AppVersion={#AppVersion}
 DefaultDirName={autopf}\Snap Afghanistan
 DefaultGroupName=Snap Afghanistan
 OutputDir=installer-output
-OutputBaseFilename=SnapAfghanistan-Setup-1.3.0
+OutputBaseFilename=SnapAfghanistan-Setup-1.4.0
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
@@ -20,7 +20,7 @@ MinVersion=10.0.17763
 UninstallDisplayIcon={app}\SnapAfghanistan.exe
 VersionInfoVersion={#AppVersion}
 VersionInfoCompany=Snap Afghanistan
-VersionInfoDescription=Snap Afghanistan Desktop Management System
+VersionInfoDescription=Snap Afghanistan Desktop Multi-User Management System
 AppPublisher=Snap Afghanistan
 AppPublisherURL=https://github.com/ehsanrahoufi234-droid/Snap-Afghanistan
 DisableProgramGroupPage=yes
@@ -34,7 +34,11 @@ Name: "{autodesktop}\Snap Afghanistan"; Filename: "{app}\SnapAfghanistan.exe"; T
 [Tasks]
 Name: desktopicon; Description: "ایجاد میان‌بر اسنپ افغانستان روی Desktop"; Flags: checkedonce
 [Run]
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=\"Snap Afghanistan LAN\""; Flags: runhidden
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=\"Snap Afghanistan LAN\" dir=in action=allow protocol=TCP localport=47821 profile=private"; Flags: runhidden
 Filename: "{app}\SnapAfghanistan.exe"; Description: "اجرای اسنپ افغانستان"; Flags: nowait postinstall skipifsilent
+[UninstallRun]
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=\"Snap Afghanistan LAN\""; Flags: runhidden
 
 [Code]
 function IsDotNet48Installed: Boolean;
